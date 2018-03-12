@@ -1,4 +1,4 @@
-var game = new Phaser.Game(1280, 640, Phaser.AUTO, "game-area", {
+const game = new Phaser.Game(1280, 640, Phaser.AUTO, "game-area", {
   preload: preload,
   create: create,
   update: update
@@ -8,23 +8,24 @@ function preload() {
   // load background image
   game.load.image("bg_clouds", "assets/tiles/bg_clouds.png");
 
-  // load object sprites
-  game.load.image("can", "assets/objects/can.png");
+  // load object/decoration sprites
   game.load.image("burst", "assets/objects/burst.png");
   game.load.image("laserburst", "assets/objects/laserburst.png");
   game.load.image("crate", "assets/objects/crate.png");
-  game.load.image("powercell", "assets/objects/powercell.png");
-
   game.load.image("tree-00", "assets/objects/tree-00.png");
 
   // load actor & object spritesheets
   game.load.spritesheet("cat", "assets/actors/thecat.png", 86, 65, 37);
   game.load.spritesheet("rat", "assets/actors/rat.png", 32, 20);
-  game.load.spritesheet("heli", "assets/objects/heli.png", 46, 20);
-  game.load.spritesheet("laser", "assets/objects/laser.png", 26, 16);
+
+  // load pickup sprites & spritesheets
+  game.load.image("can", "assets/pickups/can.png");
+  game.load.spritesheet("heli", "assets/pickups/heli.png", 46, 20);
+  game.load.spritesheet("laser", "assets/pickups/laser.png", 26, 16);
+  game.load.image("powercell", "assets/pickups/powercell.png");
 
   // load ui elements
-  game.load.spritesheet("catlives", "assets/objects/catlives.png", 16, 16);
+  game.load.spritesheet("catlives", "assets/ui/catlives.png", 16, 16);
   game.load.image("nrg-bg", "assets/ui/nrg-bg.png");
   game.load.image("nrg-fill", "assets/ui/nrg-fill.png");
   game.load.image("nrg-laser-fill", "assets/ui/nrg-laser-fill.png");
@@ -32,34 +33,146 @@ function preload() {
   // load main tilemap
   game.load.tilemap("tilemap", "assets/tiles/cattiles.json", null, Phaser.Tilemap.TILED_JSON);
   // load tile images
-  game.load.image("tiles", "assets/tiles/ground_tiles.png");
-  game.load.image("bg_sky", "assets/tiles/bg_tile.png");
+  game.load.image("ground_tiles", "assets/tiles/ground_tiles.png"); // Main ground tiles - DecorationLayer
+  game.load.image("slope_tiles", "assets/tiles/arcade_slopes.png"); // Collision tiles - SlopeLayer
+  game.load.image("bg_sky", "assets/tiles/bg_tile.png"); // Background image tile
 
-  // load game audio
+  // load game music
   /* game.load.audio("jungle", "assets/audio/music/jungleexcessive.ogg"); */
   /* game.load.audio("forest", "assets/audio/music/forest.ogg");
   game.load.audio("featherfall", "assets/audio/music/featherfall.mp3"); */
-  game.load.audio("meow", "assets/audio/ruby-meow.ogg");
-  game.load.audio("laser", "assets/audio/laser-rifle.ogg");
-  game.load.audio("empty", "assets/audio/empty-click.wav");
-  game.load.audio("reload", "assets/audio/reload.ogg");
+  // load game sounds
+  game.load.audio("meow", "assets/audio/ruby-meow.ogg"); // Sitting down meow
+  game.load.audio("laser", "assets/audio/laser-rifle.ogg"); // Laser firing with ammo
+  game.load.audio("empty", "assets/audio/empty-click.wav"); // Laser firing empty
+  game.load.audio("reload", "assets/audio/reload.ogg"); // Powercell pickup
 }
 
 // ledges: data for moving platforms
-var ledges = [
-  /* { x: 400, y: 200, scaleX: 2, scaleY: 0.5, move: false },
-    { x: 25, y: 500, scaleX: 1.25, scaleY: 0.5, move: false }, */
+const ledges = [
   { x: 75, y: 51, scaleX: 3, scaleY: 1, moveX: false, moveY: true, maxX: 0, minX: 0, maxY: 400, minY: 85 }
-  /* { x: 300, y: 100, scaleX: 0.5, scaleY: 0.55, move: false },
-    { x: 300, y: 400, scaleX: 0.75, scaleY: 0.45, move: false } */
 ];
 // empty array for storing rendered moving platform game objects
-var drawnLedges = [];
+const drawnLedges = [];
 
 // rats: data for rat enemies
-var rats = [{ x: 1600, y: 400, direction: "left", dead: false }, { x: 650, y: 325, direction: "right", dead: false }];
+const rats = [{ x: 1600, y: 400, direction: "left", dead: false }, { x: 650, y: 325, direction: "right", dead: false }];
 // empty array for storing rendered rat game objects
-var theRats = [];
+const theRats = [];
+
+// pickups: data for pickups
+function pickup(
+  have,
+  nrgBar,
+  maxNrg,
+  currentNrg,
+  nrgFill,
+  startX,
+  startY,
+  sprite,
+  gravityY,
+  bounceY,
+  scale,
+  animation
+) {
+  this.have = have;
+  this.nrgBar = nrgBar;
+  this.maxNrg = maxNrg;
+  this.currentNrg = currentNrg;
+  this.startX = startX;
+  this.startY = startY;
+  this.sprite = sprite;
+  this.gravityY = gravityY;
+  this.bounceY = bounceY;
+  this.scale = scale;
+  this.animation = animation;
+}
+
+const pickupz = [];
+
+var theHeli = new pickup(
+  false,
+  { x: 1008, y: 50 },
+  194,
+  194,
+  0,
+  100,
+  300,
+  "heli",
+  400,
+  0.1,
+  { x: 1, y: 1 },
+  { name: "rotate", frames: [0, 1, 2], fps: 15, loop: true }
+);
+
+var theLaser = new pickup(
+  false,
+  { x: 1008, y: 75 },
+  194,
+  194,
+  0,
+  200,
+  300,
+  "laser",
+  400,
+  0.1,
+  { x: 2, y: 3 },
+  { name: "laze", frames: [0, 1, 2], fps: 15, loop: true }
+);
+
+var pickups = {
+  theHeli: {
+    have: false,
+    nrgBar: {
+      x: 1008,
+      y: 50
+    },
+    maxNrg: 194,
+    currentNrg: 194,
+    nrgFill: 0,
+    startX: 100,
+    startY: 300,
+    sprite: "heli",
+    gravityY: 400,
+    bounceY: 0.1,
+    scale: {
+      x: 1,
+      y: 1
+    },
+    animation: {
+      name: "rotate",
+      frames: [0, 1, 2],
+      fps: 15,
+      loop: true
+    }
+  },
+
+  theLaser: {
+    have: false,
+    nrgBar: {
+      x: 1008,
+      y: 75
+    },
+    maxNrg: 194,
+    currentNrg: 194,
+    nrgFill: 0,
+    startX: 200,
+    startY: 300,
+    sprite: "laser",
+    gravityY: 400,
+    bounceY: 0.1,
+    scale: {
+      x: 1,
+      y: 1
+    },
+    animation: {
+      name: "laze",
+      frames: [0, 1, 2],
+      fps: 15,
+      loop: true
+    }
+  }
+};
 
 // set the default text style for messages
 var textStyle = {
@@ -80,15 +193,14 @@ var lives = 9;
 var gameLives = [];
 // set initial life to 0
 var currentLife = 0;
-// set initial heli condition to false
-var haveHeli = false;
 // set heli NRG bar vars
-var maxNrg = 194;
-var currentNrg = 194;
-var nrgFill;
+var maxHeliNrg = 194;
+var currentHeliNrg = 194;
+var heliNrgFill;
 
 // set initial laser condition to false
 var haveLaser = false;
+// set laser NRG bar vars
 var maxLaserNrg = 194;
 var currentLaserNrg = 194;
 var laserNrgFill;
@@ -99,10 +211,10 @@ function drawUi() {
   nrgBg.fixedToCamera = true;
   nrgBg.width = 200;
 
-  nrgFill = game.add.sprite(1011, 53, "nrg-fill");
-  nrgFill.fixedToCamera = true;
-  nrgFill.height = nrgFill.height - 6;
-  nrgFill.width = 0;
+  heliNrgFill = game.add.sprite(1011, 53, "nrg-fill");
+  heliNrgFill.fixedToCamera = true;
+  heliNrgFill.height = heliNrgFill.height - 6;
+  heliNrgFill.width = 0;
 
   // add NRG elements for lasdrd
   var laserNrgBg = game.add.sprite(1008, 75, "nrg-bg");
@@ -132,30 +244,40 @@ function create() {
   // start ARCADE physics engine
   game.physics.startSystem(Phaser.Physics.ARCADE);
 
-  theTree = game.add.sprite(200, 150, "tree-00");
-  theTree.scale.setTo(2, 2);
+  game.plugins.add(Phaser.Plugin.ArcadeSlopes);
+  game.slopes.preferY = true;
+
+  //theTree = game.add.sprite(200, 150, "tree-00");
+  //theTree.scale.setTo(2, 2);
 
   // add main tilemap
   map = game.add.tilemap("tilemap");
   // use the ground_tiles.png ('tiles') image for the tilemap
-  map.addTilesetImage("ground_tiles", "tiles");
+  map.addTilesetImage("ground_tiles", "ground_tiles");
+
+  // add collision tiles
+  map.addTilesetImage("arcade_slopes", "slope_tiles");
+  slopeLayer = map.createLayer("SlopeLayer");
+  game.slopes.convertTilemapLayer(slopeLayer, "arcadeslopes", 65);
+  slopeLayer.alpha = 0;
 
   // draw the ground layer - contains surfaces that define the level geometry
-  groundLayer = map.createLayer("GroundLayer");
+  //groundLayer = map.createLayer("GroundLayer");
   // draw the decoration layer - things that don't have collision but are still part of terrain
   decorationLayer = map.createLayer("DecorationLayer");
   // draw the rat bounds layer - contains data to tell rats where to collide and switch direction
   ratBounds = map.createLayer("RatBounds");
 
   // set collision for both map layers so that it's available to define more specifically later
-  map.setCollisionBetween(1, 64, true, groundLayer);
+  //map.setCollisionBetween(1, 64, true, groundLayer);
+  map.setCollisionBetween(65, 102, true, slopeLayer);
   map.setCollisionBetween(1, 64, true, ratBounds);
 
   // make the ratBounds tiles invisible
   ratBounds.alpha = 0;
 
   // set world size to match size of groundLayer
-  groundLayer.resizeWorld();
+  decorationLayer.resizeWorld();
 
   // add and play the main background music
   //music = game.add.audio("featherfall");
@@ -208,17 +330,20 @@ function create() {
     newRat.animations.add("moveLeft", [0, 1, 2], 15, true);
     newRat.animations.add("moveRight", [3, 4, 5], 15, true);
     newRat.direction = rat.direction;
+    game.slopes.enable(newRat);
     theRats.push(newRat);
   });
 
   theCan = game.add.sprite(500, 100, "can");
   game.physics.arcade.enable(theCan);
+  game.slopes.enable(theCan);
   theCan.enableBody = true;
   theCan.body.gravity.y = 400;
   theCan.body.bounce.y = 0.5;
 
   theHeli = game.add.sprite(100, 300, "heli");
   game.physics.arcade.enable(theHeli);
+  game.slopes.enable(theHeli);
   theHeli.enableBody = true;
   theHeli.body.gravity.y = 400;
   theHeli.body.bounce.y = 0.1;
@@ -227,11 +352,13 @@ function create() {
 
   theCell = game.add.sprite(400, 300, "powercell");
   game.physics.arcade.enable(theCell);
+  game.slopes.enable(theCell);
   theCell.body.gravity.y = 400;
 
   theCat = game.add.sprite(125, game.world.height - 200, "cat");
   game.physics.arcade.enable(theCat);
   theCat.body.setSize(48, 64, 18, 0);
+  game.slopes.enable(theCat);
   theCat.body.gravity.y = 400;
   theCat.body.bounce.y = 0.1;
   theCat.body.collideWorldBounds = true;
@@ -249,6 +376,7 @@ function create() {
 
   theLaser = game.add.sprite(200, 300, "laser");
   game.physics.arcade.enable(theLaser);
+  game.slopes.enable(theLaser);
   theLaser.enableBody = true;
   theLaser.scale.setTo(2, 3);
   theLaser.animations.add("laze", [0, 1, 2], 15, true);
@@ -263,14 +391,21 @@ var direction;
 var cycle = true;
 
 function update() {
-  /* game.debug.body(theCat); */
+  //game.debug.body(theCat);
+  //slopeLayer.debug = true;
 
-  var catCollideGround = game.physics.arcade.collide(theCat, groundLayer);
-  var ratCollideGround = game.physics.arcade.collide(theRats, groundLayer);
-  var canCollideGround = game.physics.arcade.collide(theCan, groundLayer);
-  var heliCollideGround = game.physics.arcade.collide(theHeli, groundLayer);
-  var laserCollideground = game.physics.arcade.collide(theLaser, groundLayer);
-  var cellCollideground = game.physics.arcade.collide(theCell, groundLayer);
+  //var catCollideGround = game.physics.arcade.collide(theCat, groundLayer);
+  var catCollideSlopes = game.physics.arcade.collide(theCat, slopeLayer);
+  //var ratCollideGround = game.physics.arcade.collide(theRats, groundLayer);
+  var ratCollideSlopes = game.physics.arcade.collide(theRats, slopeLayer);
+  //var canCollideGround = game.physics.arcade.collide(theCan, groundLayer);
+  var canCollideSlopes = game.physics.arcade.collide(theCan, slopeLayer);
+  //var heliCollideGround = game.physics.arcade.collide(theHeli, groundLayer);
+  var heliCollideSlopes = game.physics.arcade.collide(theHeli, slopeLayer);
+  //var laserCollideGround = game.physics.arcade.collide(theLaser, groundLayer);
+  var laserCollideSlopes = game.physics.arcade.collide(theLaser, slopeLayer);
+  //var cellCollideGround = game.physics.arcade.collide(theCell, groundLayer);
+  var cellCollideSlopes = game.physics.arcade.collide(theCell, slopeLayer);
 
   var catCollidePlatforms = game.physics.arcade.collide(theCat, platforms);
 
@@ -340,7 +475,11 @@ function update() {
     theCatXOffset = 0;
   }
 
-  if (theCat.body.blocked.down && !catCollideGround) {
+  /* if (theCat.body.blocked.down && !catCollideGround) {
+    catIsDown();
+  } */
+
+  if (theCat.body.y === 576) {
     catIsDown();
   }
 
@@ -373,29 +512,29 @@ function update() {
   }
 
   if (keys.up.isDown && !isSitting) {
-    if (theCat.body.onFloor() && catCollideGround) {
+    if (theCat.body.onFloor() && catCollideSlopes) {
       theCat.body.velocity.y = -250;
     } else if (theCat.body.touching.down) {
       theCat.body.velocity.y = -250;
     }
   }
 
-  var nrgRatio = currentNrg / maxNrg;
+  var nrgRatio = currentHeliNrg / maxHeliNrg;
 
   keys.down.onDown.add(sitCat);
-  if (isSitting && haveHeli) {
-    if (currentNrg <= maxNrg) {
-      currentNrg++;
-      nrgFill.width = nrgRatio * maxNrg;
+  if (isSitting && pickups.theHeli.have) {
+    if (currentHeliNrg <= maxHeliNrg) {
+      currentHeliNrg++;
+      heliNrgFill.width = nrgRatio * maxHeliNrg;
     }
   }
 
-  if (haveHeli && currentNrg) {
+  if (pickups.theHeli.have && currentHeliNrg) {
     if (spaceKey.isDown && theCat.frame != 36) {
       isSitting = false;
       theCat.body.velocity.y = -100;
-      currentNrg--;
-      nrgFill.width = nrgRatio * maxNrg;
+      currentHeliNrg--;
+      heliNrgFill.width = nrgRatio * maxHeliNrg;
 
       if (!keys.left.isDown && !keys.right.isDown) {
         if (direction === "left") {
@@ -521,8 +660,8 @@ function collectHeli(cat, heli) {
   var msg = game.add.text(msgX, msgY, "You're now a CatCopter!", textStyle);
   msg.anchor.set(0.5);
   msg.lifespan = 1500;
-  nrgFill.width = maxNrg;
-  haveHeli = true;
+  heliNrgFill.width = maxHeliNrg;
+  pickups.theHeli.have = true;
 }
 
 function collectLaser() {
