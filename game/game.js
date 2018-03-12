@@ -187,17 +187,53 @@ function addPickups() {
 }
 
 /** ITEMS - NON-POWERUP PICKUPS */
-function item(name, startX, startY, sprite, gravityY, bounceY, scale, animation, spriteObj, msg) {
+
+// can constructor - 4 x cans = 1 life restored
+function foodCan(name, startX, startY, spriteObj) {
   this.name = name;
   this.startX = startX;
   this.startY = startY;
-  this.sprite = sprite;
-  this.gravityY = gravityY;
-  this.bounceY = bounceY;
-  this.scale = scale;
-  this.animation = animation;
   this.spriteObj = spriteObj;
-  this.msg = msg;
+}
+// hold created cans
+const allCans = [];
+
+// position data for cans - pairs of x,y (may redo this later for more clarity?)
+const cans = [500, 100, 600, 100];
+
+// create a can for each set of x, y pairs in array cans
+for (i = 0; i < cans.length; i += 2) {
+  if (i > 0) {
+    j = i - 1;
+  } else {
+    j = i;
+  }
+  let newCan = new foodCan("can-" + j, cans[i], cans[i + 1], null);
+  allCans.push(newCan);
+}
+
+// draw a sprite and add each can to the game world
+function addCans() {
+  allCans.forEach(function(can) {
+    const theCan = game.add.sprite(can.startX, can.startY, "can");
+    game.physics.arcade.enable(theCan);
+    game.slopes.enable(theCan);
+    theCan.enableBody = true;
+    theCan.body.gravity.y = 400;
+    theCan.body.bounce.y = 0.1;
+    can.spriteObj = theCan;
+  });
+}
+
+// when cat and a can overlap, call this function to collect the can
+function collectCan(cat, can) {
+  can.kill();
+  var msgX = Math.floor(theCat.x + theCat.width / 2);
+  var msgY = Math.floor(theCat.y + theCat.height / 2);
+  var msg = game.add.text(msgX, msgY, "Got some catfood!", textStyle);
+  msg.anchor.set(0.5);
+  msg.lifespan = 1500;
+  score++;
 }
 
 /** ACTORS - ENEMIES AND THE LIKE */
@@ -327,13 +363,6 @@ function create() {
     drawnRats.push(newRat);
   });
 
-  theCan = game.add.sprite(500, 100, "can");
-  game.physics.arcade.enable(theCan);
-  game.slopes.enable(theCan);
-  theCan.enableBody = true;
-  theCan.body.gravity.y = 400;
-  theCan.body.bounce.y = 0.5;
-
   theCell = game.add.sprite(400, 300, "powercell");
   game.physics.arcade.enable(theCell);
   game.slopes.enable(theCell);
@@ -360,6 +389,7 @@ function create() {
 
   drawUi();
   addPickups();
+  addCans();
 
   keys = game.input.keyboard.createCursorKeys();
 
@@ -376,12 +406,15 @@ function update() {
   allPickups.forEach(function(pickup) {
     game.physics.arcade.collide(pickup.spriteObj, slopeLayer);
   });
+  allCans.forEach(function(can) {
+    game.physics.arcade.collide(can.spriteObj, slopeLayer);
+    game.physics.arcade.overlap(theCat, can.spriteObj, collectCan, null, this);
+  });
   //var catCollideGround = game.physics.arcade.collide(theCat, groundLayer);
   var catCollideSlopes = game.physics.arcade.collide(theCat, slopeLayer);
   //var ratCollideGround = game.physics.arcade.collide(drawnRats, groundLayer);
   var ratCollideSlopes = game.physics.arcade.collide(drawnRats, slopeLayer);
   //var canCollideGround = game.physics.arcade.collide(theCan, groundLayer);
-  var canCollideSlopes = game.physics.arcade.collide(theCan, slopeLayer);
   //var heliCollideGround = game.physics.arcade.collide(theHeli, groundLayer);
   var heliCollideSlopes = game.physics.arcade.collide(theHeli, slopeLayer);
   //var laserCollideGround = game.physics.arcade.collide(theLaser, groundLayer);
@@ -442,7 +475,6 @@ function update() {
     }
   });
 
-  var getCan = game.physics.arcade.overlap(theCat, theCan, collectCan, null, this);
   var getHeli = game.physics.arcade.overlap(theCat, theHeli.spriteObj, collectHeli, null, this);
   var getLaser = game.physics.arcade.overlap(theCat, theLaser.spriteObj, collectLaser, null, this);
   var getCell = game.physics.arcade.overlap(theCat, theCell, collectCell, null, this);
@@ -619,16 +651,6 @@ function sayMeow(direction) {
     meowClip.play();
     meowDelay = game.time.now + 1500;
   }
-}
-
-function collectCan(cat, can) {
-  can.kill();
-  var msgX = Math.floor(theCat.x + theCat.width / 2);
-  var msgY = Math.floor(theCat.y + theCat.height / 2);
-  var msg = game.add.text(msgX, msgY, "You got the food!", textStyle);
-  msg.anchor.set(0.5);
-  msg.lifespan = 1500;
-  score++;
 }
 
 function collectHeli(cat, heli) {
