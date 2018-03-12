@@ -25,10 +25,10 @@ function preload() {
   game.load.image("powercell", "assets/pickups/powercell.png");
 
   // load ui elements
-  game.load.spritesheet("catlives", "assets/ui/catlives.png", 16, 16);
-  game.load.image("nrg-bg", "assets/ui/nrg-bg.png");
-  game.load.image("nrg-fill", "assets/ui/nrg-fill.png");
-  game.load.image("nrg-laser-fill", "assets/ui/nrg-laser-fill.png");
+  game.load.spritesheet("catlives", "assets/ui/catlives.png", 16, 16); // cat life heads
+  game.load.image("nrg-bg", "assets/ui/nrg-bg.png"); // nrg bar background
+  game.load.image("nrg-fill-heli", "assets/ui/nrg-fill-heli.png"); // blue heli nrg
+  game.load.image("nrg-fill-laser", "assets/ui/nrg-fill-laser.png"); // red laser nrg
 
   // load main tilemap
   game.load.tilemap("tilemap", "assets/tiles/cattiles.json", null, Phaser.Tilemap.TILED_JSON);
@@ -48,134 +48,10 @@ function preload() {
   game.load.audio("reload", "assets/audio/reload.ogg"); // Powercell pickup
 }
 
-// ledges: data for moving platforms
-const ledges = [
-  { x: 75, y: 51, scaleX: 3, scaleY: 1, moveX: false, moveY: true, maxX: 0, minX: 0, maxY: 400, minY: 85 }
-];
-// empty array for storing rendered moving platform game objects
-const drawnLedges = [];
-
-// rats: data for rat enemies
-const rats = [{ x: 1600, y: 400, direction: "left", dead: false }, { x: 650, y: 325, direction: "right", dead: false }];
-// empty array for storing rendered rat game objects
-const theRats = [];
-
-// pickups: data for pickups
-function pickup(
-  have,
-  nrgBar,
-  maxNrg,
-  currentNrg,
-  nrgFill,
-  startX,
-  startY,
-  sprite,
-  gravityY,
-  bounceY,
-  scale,
-  animation
-) {
-  this.have = have;
-  this.nrgBar = nrgBar;
-  this.maxNrg = maxNrg;
-  this.currentNrg = currentNrg;
-  this.startX = startX;
-  this.startY = startY;
-  this.sprite = sprite;
-  this.gravityY = gravityY;
-  this.bounceY = bounceY;
-  this.scale = scale;
-  this.animation = animation;
-}
-
-const pickupz = [];
-
-var theHeli = new pickup(
-  false,
-  { x: 1008, y: 50 },
-  194,
-  194,
-  0,
-  100,
-  300,
-  "heli",
-  400,
-  0.1,
-  { x: 1, y: 1 },
-  { name: "rotate", frames: [0, 1, 2], fps: 15, loop: true }
-);
-
-var theLaser = new pickup(
-  false,
-  { x: 1008, y: 75 },
-  194,
-  194,
-  0,
-  200,
-  300,
-  "laser",
-  400,
-  0.1,
-  { x: 2, y: 3 },
-  { name: "laze", frames: [0, 1, 2], fps: 15, loop: true }
-);
-
-var pickups = {
-  theHeli: {
-    have: false,
-    nrgBar: {
-      x: 1008,
-      y: 50
-    },
-    maxNrg: 194,
-    currentNrg: 194,
-    nrgFill: 0,
-    startX: 100,
-    startY: 300,
-    sprite: "heli",
-    gravityY: 400,
-    bounceY: 0.1,
-    scale: {
-      x: 1,
-      y: 1
-    },
-    animation: {
-      name: "rotate",
-      frames: [0, 1, 2],
-      fps: 15,
-      loop: true
-    }
-  },
-
-  theLaser: {
-    have: false,
-    nrgBar: {
-      x: 1008,
-      y: 75
-    },
-    maxNrg: 194,
-    currentNrg: 194,
-    nrgFill: 0,
-    startX: 200,
-    startY: 300,
-    sprite: "laser",
-    gravityY: 400,
-    bounceY: 0.1,
-    scale: {
-      x: 1,
-      y: 1
-    },
-    animation: {
-      name: "laze",
-      frames: [0, 1, 2],
-      fps: 15,
-      loop: true
-    }
-  }
-};
+/** SETUP - STYLES, INITIAL VARS, ETC */
 
 // set the default text style for messages
-var textStyle = {
+const textStyle = {
   font: "28px Indie Flower",
   fontWeight: "800",
   fill: "white",
@@ -188,47 +64,146 @@ var textStyle = {
 var score = 0;
 
 // set initial # of lives to 9, because this is a game about a cat
+//// this value keeps track of how many lives are remaining, thus var - it will be reassigned
 var lives = 9;
 // empty array for storing life game objects
-var gameLives = [];
+const gameLives = [];
 // set initial life to 0
 var currentLife = 0;
-// set heli NRG bar vars
-var maxHeliNrg = 194;
-var currentHeliNrg = 194;
-var heliNrgFill;
 
-// set initial laser condition to false
-var haveLaser = false;
-// set laser NRG bar vars
-var maxLaserNrg = 194;
-var currentLaserNrg = 194;
-var laserNrgFill;
+/** LEVEL DATA */
 
+// ledges: data for moving platforms
+function ledge(posX, posY, scaleX, scaleY, moveX, moveY, maxX, minX, maxY, minY) {}
+const ledges = [
+  { x: 75, y: 51, scaleX: 3, scaleY: 1, moveX: false, moveY: true, maxX: 0, minX: 0, maxY: 400, minY: 85 }
+];
+// empty array for storing rendered moving platform game objects
+const drawnLedges = [];
+
+/** PICKUPS AKA POWERUPS */
+
+// pickup template constructor
+function pickup(
+  name,
+  have,
+  nrgBar,
+  maxNrg,
+  currentNrg,
+  nrgFill,
+  nrgObj,
+  startX,
+  startY,
+  sprite,
+  gravityY,
+  bounceY,
+  scale,
+  animation,
+  spriteObj
+) {
+  this.name = name;
+  this.have = have;
+  this.nrgBar = nrgBar;
+  this.maxNrg = maxNrg;
+  this.currentNrg = currentNrg;
+  this.nrgFill = nrgFill;
+  this.nrgObj = nrgObj;
+  this.startX = startX;
+  this.startY = startY;
+  this.sprite = sprite;
+  this.gravityY = gravityY;
+  this.bounceY = bounceY;
+  this.scale = scale;
+  this.animation = animation;
+  this.spriteObj = spriteObj;
+}
+
+// holds all created pickups
+const allPickups = [];
+
+// catcopter pickup
+const theHeli = new pickup(
+  "heli",
+  false,
+  { barX: 1008, barY: 50, fillX: 1011, fillY: 53, fillSprite: "nrg-fill-heli" },
+  194,
+  194,
+  0,
+  "",
+  100,
+  300,
+  "heli",
+  400,
+  0.1,
+  { x: 1, y: 1 },
+  { name: "rotate", frames: [0, 1, 2], fps: 15, loop: true }
+);
+allPickups.push(theHeli);
+
+// laser eyes pickup
+const theLaser = new pickup(
+  "laser",
+  false,
+  { barX: 1008, barY: 75, fillX: 1011, fillY: 78, fillSprite: "nrg-fill-laser" },
+  194,
+  194,
+  0,
+  "",
+  200,
+  300,
+  "laser",
+  0,
+  0.1,
+  { x: 2, y: 3 },
+  { name: "laze", frames: [0, 1, 2], fps: 15, loop: true }
+);
+allPickups.push(theLaser);
+
+// create each pickup item - laser and heli
+function addPickups() {
+  allPickups.forEach(function(pickup) {
+    const thePickup = game.add.sprite(pickup.startX, pickup.startY, pickup.sprite);
+    game.physics.arcade.enable(thePickup);
+    game.slopes.enable(thePickup);
+    thePickup.enableBody = true;
+    thePickup.scale.setTo(pickup.scale.x, pickup.scale.y);
+    thePickup.body.gravity.y = pickup.gravityY;
+    thePickup.body.bounce.y = pickup.bounceY;
+    thePickup.animations.add(
+      pickup.animation.name,
+      pickup.animation.frames,
+      pickup.animation.fps,
+      pickup.animation.loop
+    );
+    thePickup.animations.play(pickup.animation.name);
+    pickup.spriteObj = thePickup;
+  });
+}
+
+/** ACTORS - ENEMIES AND THE LIKE */
+
+// rats: data for rat enemies
+const rats = [{ x: 1600, y: 400, direction: "left", dead: false }, { x: 650, y: 325, direction: "right", dead: false }];
+// empty array for storing rendered rat game objects
+const drawnRats = [];
+
+// function to draw UI elements - lives, nrg bars
 function drawUi() {
-  // add NRG elements for heli
-  var nrgBg = game.add.sprite(1008, 50, "nrg-bg");
-  nrgBg.fixedToCamera = true;
-  nrgBg.width = 200;
+  allPickups.forEach(function(pickup) {
+    const nrgBg = game.add.sprite(pickup.nrgBar.barX, pickup.nrgBar.barY, "nrg-bg");
+    nrgBg.fixedToCamera = true;
+    nrgBg.width = 200;
 
-  heliNrgFill = game.add.sprite(1011, 53, "nrg-fill");
-  heliNrgFill.fixedToCamera = true;
-  heliNrgFill.height = heliNrgFill.height - 6;
-  heliNrgFill.width = 0;
-
-  // add NRG elements for lasdrd
-  var laserNrgBg = game.add.sprite(1008, 75, "nrg-bg");
-  laserNrgBg.fixedToCamera = true;
-  laserNrgBg.width = 200;
-
-  laserNrgFill = game.add.sprite(1011, 78, "nrg-laser-fill");
-  laserNrgFill.fixedToCamera = true;
-  laserNrgFill.height = laserNrgFill.height - 6;
-  laserNrgFill.width = 0;
+    const nrgFill = game.add.sprite(pickup.nrgBar.fillX, pickup.nrgBar.fillY, pickup.nrgBar.fillSprite);
+    nrgFill.fixedToCamera = true;
+    nrgFill.width = 0;
+    nrgFill.height = nrgFill.height - 6;
+    pickup.nrgObj = nrgFill;
+  });
 
   // add lives counter and draw a head for each
   for (i = 0; i < lives; i++) {
-    var newHead = game.add.sprite(1000 + 25 * i, 25, "catlives");
+    const newHead = game.add.sprite(1000 + 25 * i, 25, "catlives");
     newHead.frame = 0;
     newHead.fixedToCamera = true;
     gameLives.push(newHead);
@@ -296,8 +271,6 @@ function create() {
   theScore = game.add.text(25, 25, score, textStyle);
   theScore.fixedToCamera = true;
 
-  drawUi();
-
   platforms = game.add.group();
   game.physics.arcade.enable(platforms);
   platforms.enableBody = true;
@@ -331,7 +304,7 @@ function create() {
     newRat.animations.add("moveRight", [3, 4, 5], 15, true);
     newRat.direction = rat.direction;
     game.slopes.enable(newRat);
-    theRats.push(newRat);
+    drawnRats.push(newRat);
   });
 
   theCan = game.add.sprite(500, 100, "can");
@@ -340,15 +313,6 @@ function create() {
   theCan.enableBody = true;
   theCan.body.gravity.y = 400;
   theCan.body.bounce.y = 0.5;
-
-  theHeli = game.add.sprite(100, 300, "heli");
-  game.physics.arcade.enable(theHeli);
-  game.slopes.enable(theHeli);
-  theHeli.enableBody = true;
-  theHeli.body.gravity.y = 400;
-  theHeli.body.bounce.y = 0.1;
-  theHeli.animations.add("rotate", [0, 1, 2], 15, true);
-  theHeli.animations.play("rotate");
 
   theCell = game.add.sprite(400, 300, "powercell");
   game.physics.arcade.enable(theCell);
@@ -374,13 +338,8 @@ function create() {
   theCat.animations.add("heliRight", [27, 28, 29, 30, 31, 32], 10, true);
   theCat.animations.add("idleHeliRight", [33, 34, 35], 10, true);
 
-  theLaser = game.add.sprite(200, 300, "laser");
-  game.physics.arcade.enable(theLaser);
-  game.slopes.enable(theLaser);
-  theLaser.enableBody = true;
-  theLaser.scale.setTo(2, 3);
-  theLaser.animations.add("laze", [0, 1, 2], 15, true);
-  theLaser.animations.play("laze");
+  drawUi();
+  addPickups();
 
   keys = game.input.keyboard.createCursorKeys();
 
@@ -394,10 +353,13 @@ function update() {
   //game.debug.body(theCat);
   //slopeLayer.debug = true;
 
+  allPickups.forEach(function(pickup) {
+    game.physics.arcade.collide(pickup.spriteObj, slopeLayer);
+  });
   //var catCollideGround = game.physics.arcade.collide(theCat, groundLayer);
   var catCollideSlopes = game.physics.arcade.collide(theCat, slopeLayer);
-  //var ratCollideGround = game.physics.arcade.collide(theRats, groundLayer);
-  var ratCollideSlopes = game.physics.arcade.collide(theRats, slopeLayer);
+  //var ratCollideGround = game.physics.arcade.collide(drawnRats, groundLayer);
+  var ratCollideSlopes = game.physics.arcade.collide(drawnRats, slopeLayer);
   //var canCollideGround = game.physics.arcade.collide(theCan, groundLayer);
   var canCollideSlopes = game.physics.arcade.collide(theCan, slopeLayer);
   //var heliCollideGround = game.physics.arcade.collide(theHeli, groundLayer);
@@ -409,7 +371,7 @@ function update() {
 
   var catCollidePlatforms = game.physics.arcade.collide(theCat, platforms);
 
-  var ratCollideBounds = game.physics.arcade.collide(theRats, ratBounds);
+  var ratCollideBounds = game.physics.arcade.collide(drawnRats, ratBounds);
 
   drawnLedges.forEach(function(ledge) {
     if (ledge.moveY) {
@@ -431,11 +393,11 @@ function update() {
 
   theScore.setText(score);
 
-  theRats.forEach(function(rat) {
+  drawnRats.forEach(function(rat) {
     var bLeft = rat.body.blocked.left;
     var bRight = rat.body.blocked.right;
     var biteCat = game.physics.arcade.overlap(theCat, rat, biteTheCat, null, this);
-    var killRat = game.physics.arcade.overlap(theLaser, rat, killARat, null, this);
+    var killRat = game.physics.arcade.overlap(theLaser.spriteObj, rat, killARat, null, this);
 
     if (rat.direction === "left" && !rat.dead) {
       rat.body.velocity.x = -50;
@@ -461,8 +423,8 @@ function update() {
   });
 
   var getCan = game.physics.arcade.overlap(theCat, theCan, collectCan, null, this);
-  var getHeli = game.physics.arcade.overlap(theCat, theHeli, collectHeli, null, this);
-  var getLaser = game.physics.arcade.overlap(theCat, theLaser, collectLaser, null, this);
+  var getHeli = game.physics.arcade.overlap(theCat, theHeli.spriteObj, collectHeli, null, this);
+  var getLaser = game.physics.arcade.overlap(theCat, theLaser.spriteObj, collectLaser, null, this);
   var getCell = game.physics.arcade.overlap(theCat, theCell, collectCell, null, this);
 
   var spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
@@ -519,22 +481,22 @@ function update() {
     }
   }
 
-  var nrgRatio = currentHeliNrg / maxHeliNrg;
+  var heliNrgRatio = theHeli.currentNrg / theHeli.maxNrg;
 
   keys.down.onDown.add(sitCat);
-  if (isSitting && pickups.theHeli.have) {
-    if (currentHeliNrg <= maxHeliNrg) {
-      currentHeliNrg++;
-      heliNrgFill.width = nrgRatio * maxHeliNrg;
+  if (isSitting && theHeli.have) {
+    if (theHeli.currentNrg <= theHeli.maxNrg) {
+      theHeli.currentNrg++;
+      theHeli.nrgObj.width = heliNrgRatio * theHeli.maxNrg;
     }
   }
 
-  if (pickups.theHeli.have && currentHeliNrg) {
+  if (theHeli.have && theHeli.currentNrg) {
     if (spaceKey.isDown && theCat.frame != 36) {
       isSitting = false;
       theCat.body.velocity.y = -100;
-      currentHeliNrg--;
-      heliNrgFill.width = nrgRatio * maxHeliNrg;
+      theHeli.currentNrg--;
+      theHeli.nrgObj.width = heliNrgRatio * theHeli.maxNrg;
 
       if (!keys.left.isDown && !keys.right.isDown) {
         if (direction === "left") {
@@ -553,7 +515,7 @@ function update() {
     }
   }
 
-  if (fKey.isDown && haveLaser) {
+  if (fKey.isDown && theLaser.have) {
     if (direction === "left") {
       shootLaser("left");
     } else if (direction === "right") {
@@ -564,23 +526,23 @@ function update() {
 
 var laserDelay = 0;
 function shootLaser(direction) {
-  if (game.time.now > laserDelay && currentLaserNrg) {
-    theLaser.alpha = 1;
+  laser = theLaser.spriteObj;
+  if (game.time.now > laserDelay && theLaser.currentNrg) {
+    laser.alpha = 1;
     laserRifle.play();
-    currentLaserNrg -= 48.5;
-    laserNrgFill.width = currentLaserNrg;
+    theLaser.currentNrg -= 48.5;
+    theLaser.nrgObj.width = theLaser.currentNrg;
     if (direction === "right") {
-      theLaser.x = theCat.x + 70;
-      theLaser.y = theCat.y + 20;
-      theLaser.scale.setTo(3, 2);
-      game.time.events.add(Phaser.Timer.SECOND, hideSprite, this);
+      laser.x = theCat.x + 70;
+      laser.y = theCat.y + 20;
+      laser.scale.setTo(3, 2);
     }
     if (direction === "left") {
-      theLaser.x = theCat.x + 20;
-      theLaser.y = theCat.y + 20;
-      theLaser.scale.setTo(-3, 2);
-      game.time.events.add(Phaser.Timer.SECOND, hideSprite, this);
+      laser.x = theCat.x + 20;
+      laser.y = theCat.y + 20;
+      laser.scale.setTo(-3, 2);
     }
+    game.add.tween(laser).to({ alpha: 0 }, 500, Phaser.Easing.Linear.None, true, 1000);
     laserDelay = game.time.now + 1000;
   } else if (game.time.now > laserDelay) {
     emptyClick.play();
@@ -591,10 +553,6 @@ function shootLaser(direction) {
     msg.lifespan = 1500;
     laserDelay = game.time.now + 1000;
   }
-}
-
-function hideSprite() {
-  game.add.tween(theLaser).to({ alpha: 0 }, 500, Phaser.Easing.Linear.None, true);
 }
 
 function flyLeft() {
@@ -660,43 +618,43 @@ function collectHeli(cat, heli) {
   var msg = game.add.text(msgX, msgY, "You're now a CatCopter!", textStyle);
   msg.anchor.set(0.5);
   msg.lifespan = 1500;
-  heliNrgFill.width = maxHeliNrg;
-  pickups.theHeli.have = true;
+  theHeli.nrgObj.width = theHeli.maxNrg;
+  theHeli.have = true;
 }
 
-function collectLaser() {
-  if (!haveLaser) {
-    theLaser.x = 0;
-    theLaser.y = 0;
-    theLaser.alpha = 0;
+function collectLaser(cat, laser) {
+  if (!theLaser.have) {
+    laser.x = 0;
+    laser.y = 0;
+    laser.alpha = 0;
     var msgX = Math.floor(theCat.x + theCat.width / 2);
     var msgY = Math.floor(theCat.y + theCat.height / 2);
     var msg = game.add.text(msgX, msgY, "Lazer Eyes!", textStyle);
     msg.anchor.set(0.5);
     msg.lifespan = 1500;
-    laserNrgFill.width = maxLaserNrg;
-    haveLaser = true;
+    theLaser.nrgObj.width = theLaser.maxNrg;
+    theLaser.have = true;
   }
 }
 
 var cellDelay = 0;
 function collectCell(cat, cell) {
-  if (haveLaser) {
+  if (theLaser.have) {
     var msgX = Math.floor(theCat.x + theCat.width / 2);
     var msgY = Math.floor(theCat.y + theCat.height / 2);
     if (game.time.now > cellDelay) {
-      if (laserNrgFill.width === maxLaserNrg) {
+      if (theLaser.nrgObj.width === theLaser.maxNrg) {
         var msg = game.add.text(msgX, msgY, "Ammo full!", textStyle);
         msg.anchor.set(0.5);
         msg.lifespan = 1500;
       }
     }
-    if (laserNrgFill.width != maxLaserNrg) {
+    if (theLaser.nrgObj.width != theLaser.maxNrg) {
       cell.kill();
       reloadLaser.play();
       var msg = game.add.text(msgX, msgY, "Got Powercell!", textStyle);
-      currentLaserNrg = maxLaserNrg;
-      laserNrgFill.width = maxLaserNrg;
+      theLaser.currentNrg = theLaser.maxNrg;
+      theLaser.nrgObj.width = theLaser.maxNrg;
       msg.anchor.set(0.5);
       msg.lifespan = 1500;
     }
@@ -729,11 +687,15 @@ function biteTheCat(cat, rat) {
   }
 }
 
+var burstDelay = 0;
 function killARat(laser, rat) {
   rat.dead = true;
-  var laserBurst = game.add.sprite(theLaser.x + 75, rat.y, "laserburst");
-  laserBurst.lifespan = 500;
+  if (game.time.now > burstDelay) {
+    var laserBurst = game.add.sprite(rat.x, rat.y, "laserburst");
+    laserBurst.lifespan = 1000;
+  }
   game.add.tween(rat).to({ alpha: 0 }, 500, Phaser.Easing.Linear.None, true);
+  burstDelay = game.time.now + 1500;
 }
 
 function catIsDown() {
