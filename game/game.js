@@ -99,7 +99,8 @@ function pickup(
   bounceY,
   scale,
   animation,
-  spriteObj
+  spriteObj,
+  msg
 ) {
   this.name = name;
   this.have = have;
@@ -116,6 +117,7 @@ function pickup(
   this.scale = scale;
   this.animation = animation;
   this.spriteObj = spriteObj;
+  this.msg = msg;
 }
 
 // holds all created pickups
@@ -136,7 +138,9 @@ const theHeli = new pickup(
   400,
   0.1,
   { x: 1, y: 1 },
-  { name: "rotate", frames: [0, 1, 2], fps: 15, loop: true }
+  { name: "rotate", frames: [0, 1, 2], fps: 15, loop: true },
+  null,
+  "You're now a catcopter!"
 );
 allPickups.push(theHeli);
 
@@ -155,7 +159,9 @@ const theLaser = new pickup(
   0,
   0.1,
   { x: 2, y: 3 },
-  { name: "laze", frames: [0, 1, 2], fps: 15, loop: true }
+  { name: "laze", frames: [0, 1, 2], fps: 15, loop: true },
+  null,
+  "Lazer Eyes!"
 );
 allPickups.push(theLaser);
 
@@ -178,6 +184,20 @@ function addPickups() {
     thePickup.animations.play(pickup.animation.name);
     pickup.spriteObj = thePickup;
   });
+}
+
+/** ITEMS - NON-POWERUP PICKUPS */
+function item(name, startX, startY, sprite, gravityY, bounceY, scale, animation, spriteObj, msg) {
+  this.name = name;
+  this.startX = startX;
+  this.startY = startY;
+  this.sprite = sprite;
+  this.gravityY = gravityY;
+  this.bounceY = bounceY;
+  this.scale = scale;
+  this.animation = animation;
+  this.spriteObj = spriteObj;
+  this.msg = msg;
 }
 
 /** ACTORS - ENEMIES AND THE LIKE */
@@ -615,7 +635,7 @@ function collectHeli(cat, heli) {
   heli.kill();
   var msgX = Math.floor(theCat.x + theCat.width / 2);
   var msgY = Math.floor(theCat.y + theCat.height / 2);
-  var msg = game.add.text(msgX, msgY, "You're now a CatCopter!", textStyle);
+  var msg = game.add.text(msgX, msgY, theHeli.msg, textStyle);
   msg.anchor.set(0.5);
   msg.lifespan = 1500;
   theHeli.nrgObj.width = theHeli.maxNrg;
@@ -629,7 +649,7 @@ function collectLaser(cat, laser) {
     laser.alpha = 0;
     var msgX = Math.floor(theCat.x + theCat.width / 2);
     var msgY = Math.floor(theCat.y + theCat.height / 2);
-    var msg = game.add.text(msgX, msgY, "Lazer Eyes!", textStyle);
+    var msg = game.add.text(msgX, msgY, theLaser.msg, textStyle);
     msg.anchor.set(0.5);
     msg.lifespan = 1500;
     theLaser.nrgObj.width = theLaser.maxNrg;
