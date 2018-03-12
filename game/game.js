@@ -543,7 +543,7 @@ function shootLaser(direction) {
       laser.scale.setTo(-3, 2);
     }
     game.add.tween(laser).to({ alpha: 0 }, 500, Phaser.Easing.Linear.None, true, 1000);
-    laserDelay = game.time.now + 1000;
+    laserDelay = game.time.now + 2000;
   } else if (game.time.now > laserDelay) {
     emptyClick.play();
     var msgX = Math.floor(theCat.x + theCat.width / 2);
@@ -551,7 +551,7 @@ function shootLaser(direction) {
     var msg = game.add.text(msgX, msgY, "Empty!", textStyle);
     msg.anchor.set(0.5);
     msg.lifespan = 1500;
-    laserDelay = game.time.now + 1000;
+    laserDelay = game.time.now + 2000;
   }
 }
 
