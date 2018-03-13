@@ -1,7 +1,11 @@
 body {
   font-family: "Indie Flower", sans-serif;
+  background: black;
+  height: 100vh;
+  margin-top: -50px;
 }
 
 #game-area {
+  padding-top: 50px;
   margin-top: 50px;
 }

@@ -4,6 +4,8 @@ const game = new Phaser.Game(1280, 640, Phaser.AUTO, "game-area", {
   update: update
 });
 
+const multiplier = 64;
+
 function preload() {
   // load background image
   game.load.image("bg_clouds", "assets/tiles/bg_clouds.png");
@@ -13,6 +15,8 @@ function preload() {
   game.load.image("laserburst", "assets/objects/laserburst.png");
   game.load.image("crate", "assets/objects/crate.png");
   game.load.image("tree-00", "assets/objects/tree-00.png");
+  game.load.image("tree-01", "assets/objects/tree-01.png");
+  game.load.image("tree-02", "assets/objects/tree-02.png");
 
   // load actor & object spritesheets
   game.load.spritesheet("cat", "assets/actors/thecat.png", 86, 65, 37);
@@ -39,8 +43,8 @@ function preload() {
 
   // load game music
   /* game.load.audio("jungle", "assets/audio/music/jungleexcessive.ogg"); */
-  /* game.load.audio("forest", "assets/audio/music/forest.ogg");
-  game.load.audio("featherfall", "assets/audio/music/featherfall.mp3"); */
+  //game.load.audio("forest", "assets/audio/music/forest.ogg");
+  game.load.audio("featherfall", "assets/audio/music/featherfall.mp3");
   // load game sounds
   game.load.audio("meow", "assets/audio/ruby-meow.ogg"); // Sitting down meow
   game.load.audio("laser", "assets/audio/laser-rifle.ogg"); // Laser firing with ammo
@@ -60,8 +64,20 @@ const textStyle = {
   strokeThickness: "5"
 };
 
+const bigTextStyle = {
+  font: "48px Indie Flower",
+  fontWeight: "800",
+  fill: "red",
+  align: "center",
+  stroke: "black",
+  strokeThickness: "10"
+};
+
 // set initial score to 0
 var score = 0;
+
+// set remaining rats to 0
+var remainingRats = 0;
 
 // set initial # of lives to 9, because this is a game about a cat
 //// this value keeps track of how many lives are remaining, thus var - it will be reassigned
@@ -76,7 +92,7 @@ var currentLife = 0;
 // ledges: data for moving platforms
 function ledge(posX, posY, scaleX, scaleY, moveX, moveY, maxX, minX, maxY, minY) {}
 const ledges = [
-  { x: 75, y: 51, scaleX: 3, scaleY: 1, moveX: false, moveY: true, maxX: 0, minX: 0, maxY: 400, minY: 85 }
+  { x: 960, y: 500, scaleX: 3, scaleY: 1, moveX: false, moveY: true, maxX: 0, minX: 0, maxY: 1450, minY: 700 }
 ];
 // empty array for storing rendered moving platform game objects
 const drawnLedges = [];
@@ -132,8 +148,8 @@ const theHeli = new pickup(
   194,
   0,
   "",
-  100,
-  300,
+  36 * multiplier,
+  27 * multiplier,
   "heli",
   400,
   0.1,
@@ -153,8 +169,8 @@ const theLaser = new pickup(
   194,
   0,
   "",
-  200,
-  300,
+  52 * multiplier,
+  2 * multiplier,
   "laser",
   0,
   0.1,
@@ -199,7 +215,7 @@ function foodCan(name, startX, startY, spriteObj) {
 const allCans = [];
 
 // position data for cans - pairs of x,y (may redo this later for more clarity?)
-const cans = [500, 100, 600, 100];
+const cans = [9 * multiplier, 10 * multiplier, 5 * multiplier, 27 * multiplier, 46 * multiplier, 21 * multiplier];
 
 // create a can for each set of x, y pairs in array cans
 for (i = 0; i < cans.length; i += 2) {
@@ -239,9 +255,29 @@ function collectCan(cat, can) {
 /** ACTORS - ENEMIES AND THE LIKE */
 
 // rats: data for rat enemies
-const rats = [{ x: 1600, y: 400, direction: "left", dead: false }, { x: 650, y: 325, direction: "right", dead: false }];
+const rats = [
+  { x: 2 * multiplier, y: 11 * multiplier, direction: "left", dead: false },
+  { x: 24 * multiplier, y: 26 * multiplier, direction: "right", dead: false },
+  { x: 2 * multiplier, y: 20 * multiplier, direction: "left", dead: false },
+  { x: 14 * multiplier, y: 24 * multiplier, direction: "right", dead: false },
+  { x: 38 * multiplier, y: 4 * multiplier, direction: "left", dead: false },
+  { x: 28 * multiplier, y: 7 * multiplier, direction: "right", dead: false }
+];
 // empty array for storing rendered rat game objects
 const drawnRats = [];
+
+// kill the rat when it collides with the laser
+var burstDelay = 0;
+function killARat(laser, rat) {
+  if (laser.alpha === 1 && game.time.now > burstDelay) {
+    rat.dead = true;
+    var laserBurst = game.add.sprite(rat.x, rat.y, "laserburst");
+    laserBurst.lifespan = 1000;
+    remainingRats--;
+    game.add.tween(rat).to({ alpha: 0 }, 500, Phaser.Easing.Linear.None, true);
+    burstDelay = game.time.now + 1500;
+  }
+}
 
 // function to draw UI elements - lives, nrg bars
 function drawUi() {
@@ -268,7 +304,7 @@ function drawUi() {
 
 function create() {
   // draw main tiling cloud background
-  var bg_clouds = game.add.tileSprite(0, 0, 18048, 640, "bg_clouds");
+  var bg_clouds = game.add.tileSprite(0, 0, 18048, 1920, "bg_clouds");
   // set background to scroll
   bg_clouds.autoScroll(25, 0);
 
@@ -278,8 +314,12 @@ function create() {
   game.plugins.add(Phaser.Plugin.ArcadeSlopes);
   game.slopes.preferY = true;
 
-  //theTree = game.add.sprite(200, 150, "tree-00");
-  //theTree.scale.setTo(2, 2);
+  theTree = game.add.sprite(5.5 * multiplier, 23 * multiplier, "tree-00");
+  theTree.scale.setTo(2, 2);
+  theTree01 = game.add.sprite(9 * multiplier, 4 * multiplier, "tree-01");
+  theTree01.scale.setTo(2, 2);
+  theTree02 = game.add.sprite(29 * multiplier, 4.1 * multiplier, "tree-02");
+  theTree02.scale.setTo(2, 2);
 
   // add main tilemap
   map = game.add.tilemap("tilemap");
@@ -311,9 +351,9 @@ function create() {
   decorationLayer.resizeWorld();
 
   // add and play the main background music
-  //music = game.add.audio("featherfall");
-  /* music.play(); */
-  //music.loop = true;
+  music = game.add.audio("featherfall");
+  music.play();
+  music.loopFull(0.5);
   // add the meow sound effect for use later
   meowClip = game.add.audio("meow");
   // add the laser sound effect for use later
@@ -324,8 +364,12 @@ function create() {
   reloadLaser = game.add.audio("reload");
 
   // add score counter and set it to follow camera
-  theScore = game.add.text(25, 25, score, textStyle);
+  theScore = game.add.text(25, 25, "Cans: " + score, textStyle);
   theScore.fixedToCamera = true;
+
+  // add remaining rats counter and set it to follow camera
+  theRemainingRats = game.add.text(25, 55, "Rats: " + remainingRats, textStyle);
+  theRemainingRats.fixedToCamera = true;
 
   platforms = game.add.group();
   game.physics.arcade.enable(platforms);
@@ -363,12 +407,14 @@ function create() {
     drawnRats.push(newRat);
   });
 
+  remainingRats = drawnRats.length;
+
   theCell = game.add.sprite(400, 300, "powercell");
   game.physics.arcade.enable(theCell);
   game.slopes.enable(theCell);
   theCell.body.gravity.y = 400;
 
-  theCat = game.add.sprite(125, game.world.height - 200, "cat");
+  theCat = game.add.sprite(50 * multiplier, 1 * multiplier, "cat");
   game.physics.arcade.enable(theCat);
   theCat.body.setSize(48, 64, 18, 0);
   game.slopes.enable(theCat);
@@ -387,9 +433,9 @@ function create() {
   theCat.animations.add("heliRight", [27, 28, 29, 30, 31, 32], 10, true);
   theCat.animations.add("idleHeliRight", [33, 34, 35], 10, true);
 
-  drawUi();
   addPickups();
   addCans();
+  drawUi();
 
   keys = game.input.keyboard.createCursorKeys();
 
@@ -410,16 +456,11 @@ function update() {
     game.physics.arcade.collide(can.spriteObj, slopeLayer);
     game.physics.arcade.overlap(theCat, can.spriteObj, collectCan, null, this);
   });
-  //var catCollideGround = game.physics.arcade.collide(theCat, groundLayer);
+
   var catCollideSlopes = game.physics.arcade.collide(theCat, slopeLayer);
-  //var ratCollideGround = game.physics.arcade.collide(drawnRats, groundLayer);
   var ratCollideSlopes = game.physics.arcade.collide(drawnRats, slopeLayer);
-  //var canCollideGround = game.physics.arcade.collide(theCan, groundLayer);
-  //var heliCollideGround = game.physics.arcade.collide(theHeli, groundLayer);
   var heliCollideSlopes = game.physics.arcade.collide(theHeli, slopeLayer);
-  //var laserCollideGround = game.physics.arcade.collide(theLaser, groundLayer);
   var laserCollideSlopes = game.physics.arcade.collide(theLaser, slopeLayer);
-  //var cellCollideGround = game.physics.arcade.collide(theCell, groundLayer);
   var cellCollideSlopes = game.physics.arcade.collide(theCell, slopeLayer);
 
   var catCollidePlatforms = game.physics.arcade.collide(theCat, platforms);
@@ -444,9 +485,18 @@ function update() {
     }
   });
 
-  theScore.setText(score);
+  theScore.setText("Cans: " + score);
+  theRemainingRats.setText("Rats: " + remainingRats);
 
-  drawnRats.forEach(function(rat) {
+  if (score === 3 && !cansCollected) {
+    allCansCollected();
+  }
+
+  if (remainingRats === 0 && !ratsDead) {
+    allRatsDead();
+  }
+
+  drawnRats.forEach(function(rat, index) {
     var bLeft = rat.body.blocked.left;
     var bRight = rat.body.blocked.right;
     var biteCat = game.physics.arcade.overlap(theCat, rat, biteTheCat, null, this);
@@ -493,7 +543,7 @@ function update() {
     catIsDown();
   } */
 
-  if (theCat.body.y === 576) {
+  if (theCat.body.y === 1856) {
     catIsDown();
   }
 
@@ -729,20 +779,29 @@ function biteTheCat(cat, rat) {
   }
 }
 
-var burstDelay = 0;
-function killARat(laser, rat) {
-  rat.dead = true;
-  if (game.time.now > burstDelay) {
-    var laserBurst = game.add.sprite(rat.x, rat.y, "laserburst");
-    laserBurst.lifespan = 1000;
-  }
-  game.add.tween(rat).to({ alpha: 0 }, 500, Phaser.Easing.Linear.None, true);
-  burstDelay = game.time.now + 1500;
+var ratsDead = false;
+function allRatsDead() {
+  var msgX = Math.floor(theCat.x - 50);
+  var msgY = Math.floor(theCat.y - 175);
+  var msg = game.add.text(msgX, msgY, "ALL RATS ELIMINATED...", bigTextStyle);
+  game.add.tween(msg).to({ alpha: 0 }, 2000, Phaser.Easing.Linear.None, true, 1500);
+  msg.lifespan = 3500;
+  ratsDead = true;
+}
+
+var cansCollected = false;
+function allCansCollected() {
+  var msgX = Math.floor(theCat.x - 50);
+  var msgY = Math.floor(theCat.y - 175);
+  var msg = game.add.text(msgX, msgY, "ALL CANS COLLECTED...", bigTextStyle);
+  game.add.tween(msg).to({ alpha: 0 }, 2000, Phaser.Easing.Linear.None, true, 1500);
+  msg.lifespan = 3500;
+  cansCollected = true;
 }
 
 function catIsDown() {
   theCat.x = 125;
-  theCat.y = game.world.height - 200;
+  theCat.y = 0;
   if (lives > 0) {
     var thisLife = gameLives[currentLife];
     thisLife.frame = 1;
