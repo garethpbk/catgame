@@ -454,7 +454,7 @@ function update() {
   });
   allCans.forEach(function(can) {
     game.physics.arcade.collide(can.spriteObj, slopeLayer);
-    game.physics.arcade.overlap(theCat, can.spriteObj, collectCan, null, this);
+    game.physics.arcade.collide(theCat, can.spriteObj, collectCan, null, this);
   });
 
   var catCollideSlopes = game.physics.arcade.collide(theCat, slopeLayer);
