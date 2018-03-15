@@ -60,6 +60,20 @@ class Main extends Phaser.State {
 
     this.game.camera.follow(this.theCat);
 
+    // create ledges - moving platforms
+    this.game.addLedges = () => {
+      this.game.allLedges.forEach(ledge => {
+        const theLedge = this.game.add.sprite(ledge.startX, ledge.startY, ledge.sprite);
+        this.game.physics.arcade.enable(theLedge);
+        theLedge.enableBody = true;
+        theLedge.scale.setTo(ledge.scaleX, ledge.scaleY);
+        theLedge.body.immovable = true;
+        ledge.spriteObj = theLedge;
+      });
+    };
+    this.game.addLedges();
+    console.log(this.game.allLedges);
+
     // create each pickup item - laser and heli
     this.game.addPickups = () => {
       this.game.allPickups.forEach(pickup => {
@@ -88,8 +102,32 @@ class Main extends Phaser.State {
   update() {
     const catCollide = this.game.physics.arcade.collide(this.theCat, this.slopeLayer);
 
+    this.game.allLedges.forEach(ledge => {
+      this.game.physics.arcade.collide(ledge.spriteObj, this.theCat);
+    });
+
     this.game.allPickups.forEach(pickup => {
       this.game.physics.arcade.collide(pickup.spriteObj, this.slopeLayer);
+    });
+
+    const moveLedgeY = this.game.allLedges.forEach(ledge => {
+      const ledgeSprite = ledge.spriteObj;
+
+      if (ledge.moveY) {
+        if (ledge.cycle) {
+          ledgeSprite.body.velocity.y += 2;
+          if (ledgeSprite.y > ledge.maxY) {
+            ledgeSprite.body.velocity.y = 0;
+            ledge.cycle = false;
+          }
+        } else if (!ledge.cycle) {
+          ledgeSprite.body.velocity.y -= 2;
+          if (ledgeSprite.y < ledge.minY) {
+            ledgeSprite.body.velocity.y = 0;
+            ledge.cycle = true;
+          }
+        }
+      }
     });
 
     this.theCat.body.velocity.x = 0;

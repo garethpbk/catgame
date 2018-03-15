@@ -8,6 +8,7 @@ module.exports = {
     path: path.resolve(__dirname, "dist"),
     filename: "game.bundle.js"
   },
+  watch: true,
   plugins: [new CopyWebpackPlugin([{ from: "static" }])],
   module: {
     rules: [

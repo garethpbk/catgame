@@ -82,6 +82,65 @@ class Preload extends Phaser.State {
     // set initial life to 0
     this.game.currentLife = 0;
 
+    /** LEVEL DATA */
+
+    // ledge template constructor - for moving platforms
+    class Ledge {
+      constructor(
+        name,
+        startX,
+        startY,
+        maxX,
+        maxY,
+        minX,
+        minY,
+        moveX,
+        moveY,
+        scaleX,
+        scaleY,
+        sprite,
+        cycle,
+        spriteObj
+      ) {
+        this.name = name;
+        this.startX = startX;
+        this.startY = startY;
+        this.maxX = maxX;
+        this.maxY = maxY;
+        this.minX = minX;
+        this.minY = minY;
+        this.moveX = moveX;
+        this.moveY = moveY;
+        this.scaleX = scaleX;
+        this.scaleY = scaleY;
+        this.sprite = sprite;
+        this.cycle = cycle;
+        this.spriteObj = spriteObj;
+      }
+    }
+
+    //hold all platform game objects
+    this.game.allLedges = [];
+
+    //first ledge
+    this.game.ledgeOne = new Ledge(
+      "ledgeOne",
+      15 * this.game.multiplier,
+      8 * this.game.multiplier,
+      0,
+      1450,
+      0,
+      700,
+      false,
+      true,
+      3,
+      1,
+      "crate",
+      true,
+      null
+    );
+    this.game.allLedges.push(this.game.ledgeOne);
+
     /** PICKUPS AKA POWERUPS */
 
     // pickup template constructor
