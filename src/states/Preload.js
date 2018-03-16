@@ -14,6 +14,7 @@ class Preload extends Phaser.State {
     // load actor & object spritesheets
     this.game.load.spritesheet("cat", "assets/actors/thecat.png", 86, 65, 37);
     this.game.load.spritesheet("rat", "assets/actors/rat.png", 32, 20);
+    this.game.load.spritesheet("bird", "assets/actors/bird.png", 43, 21);
 
     // load pickup sprites & spritesheets
     this.game.load.image("can", "assets/pickups/can.png");

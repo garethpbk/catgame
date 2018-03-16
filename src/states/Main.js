@@ -105,6 +105,7 @@ class Main extends Phaser.State {
     this.game.addFoodCans();
     this.game.addPowerCells();
     this.game.addRats();
+    this.game.addBirds();
 
     ///
   }
@@ -140,6 +141,11 @@ class Main extends Phaser.State {
       this.game.physics.arcade.collide(rat.spriteObj, this.ratBounds);
       this.game.physics.arcade.overlap(this.game.theCat, rat.spriteObj, this.game.biteTheCat, null, this);
       this.game.physics.arcade.overlap(this.game.theLaser.spriteObj, rat.spriteObj, this.game.killARat, null, this);
+    });
+
+    this.game.allBirds.forEach(bird => {
+      this.game.physics.arcade.overlap(this.game.theCat, bird.spriteObj, this.game.biteTheCat, null, this);
+      this.game.physics.arcade.overlap(this.game.theLaser.spriteObj, bird.spriteObj, this.game.killABird, null, this);
     });
 
     const moveLedgeY = this.game.allLedges.forEach(ledge => {
@@ -188,6 +194,42 @@ class Main extends Phaser.State {
       if (ratSprite.alpha === 0) {
         ratSprite.kill();
       }
+    });
+
+    const birdBehavior = this.game.allBirds.forEach(bird => {
+      const birdSprite = bird.spriteObj;
+
+      if (bird.cycleX) {
+        birdSprite.body.velocity.x = 200;
+        if (birdSprite.x > bird.endX) {
+          birdSprite.body.velocity.x = 0;
+          bird.cycleX = false;
+        }
+      }
+      if (!bird.cycleX) {
+        birdSprite.body.velocity.x = -200;
+        if (birdSprite.x < bird.startX) {
+          birdSprite.body.velocity.x = 0;
+          bird.cycleX = true;
+        }
+      }
+
+      if (bird.cycleY) {
+        birdSprite.body.velocity.y = 200;
+        if (birdSprite.y > bird.endY) {
+          birdSprite.body.velocity.y = 0;
+          bird.cycleY = false;
+        }
+      }
+      if (!bird.cycleY) {
+        birdSprite.body.velocity.y = -200;
+        if (birdSprite.y < bird.startY) {
+          birdSprite.body.velocity.y = 0;
+          bird.cycleY = true;
+        }
+      }
+
+      birdSprite.animations.play("flap");
     });
 
     this.game.theRemainingRats.setText("Rats: " + this.game.allRats.length);

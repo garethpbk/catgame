@@ -459,6 +459,65 @@ class Setup extends Phaser.State {
       }
     };
 
+    // bird class
+    class Bird {
+      constructor(name, startX, startY, endX, endY, cycleX, cycleY, dead, delay, spriteObj) {
+        this.name = name;
+        this.startX = startX;
+        this.startY = startY;
+        this.endX = endX;
+        this.endY = endY;
+        this.cycleX = cycleX;
+        this.cycleY = cycleY;
+        this.dead = dead;
+        this.delay = delay;
+        this.spriteObj = spriteObj;
+      }
+    }
+    this.game.allBirds = [];
+
+    this.game.birdOne = new Bird(
+      "birdOne",
+      4 * this.game.multiplier, // startX
+      1 * this.game.multiplier, // startY
+      8 * this.game.multiplier, // endX
+      4 * this.game.multiplier, // endY
+      true,
+      true,
+      false,
+      0,
+      null
+    );
+
+    this.game.allBirds.push(this.game.birdOne);
+
+    this.game.addBirds = () => {
+      this.game.allBirds.forEach(bird => {
+        const theBird = this.game.add.sprite(bird.startX, bird.startY, "bird");
+        this.game.physics.arcade.enable(theBird);
+        this.game.slopes.enable(theBird);
+        theBird.enableBody = true;
+        theBird.body.collideWorldBounds = true;
+        theBird.animations.add("flap", [0, 1, 2, 3, 4, 5, 6], 15, true);
+        theBird.parentBird = bird;
+        theBird.scale.setTo(1.5, 1.5);
+        bird.spriteObj = theBird;
+      });
+    };
+
+    this.game.killABird = (laser, bird) => {
+      const parentBird = bird.parentBird;
+      const parentIndex = this.game.allBirds.indexOf(parentBird);
+      if (laser.alpha === 1 && this.game.time.now > parentBird.delay) {
+        parentBird.dead = true;
+        const laserBurst = this.game.add.sprite(bird.x, bird.y, "laserburst");
+        laserBurst.lifespan = 1000;
+        this.game.add.tween(bird).to({ alpha: 0 }, 500, Phaser.Easing.Linear.None, true);
+        this.game.allBirds.splice(parentIndex, 1);
+        parentBird.delay = this.game.time.now + 1500;
+      }
+    };
+
     this.game.sayMeow = direction => {
       if (this.game.time.now > this.game.theCat.meowDelay) {
         let meowX, meowY;
