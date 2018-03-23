@@ -7,8 +7,8 @@ class Boot extends Phaser.State {
      *  "cat" is also used later in Main to create the player sprite
      */
 
-    this.game.load.spritesheet("cat", "assets/actors/thecat.png", 86, 65, 37);
-    this.game.load.image("preloadBar", "assets/ui/nrg-loading.png");
+    this.game.load.spritesheet('cat', 'assets/actors/thecat.png', 86, 65, 37);
+    this.game.load.image('preloadBar', 'assets/ui/nrg-loading.png');
   }
 
   create() {
@@ -16,7 +16,7 @@ class Boot extends Phaser.State {
     this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
 
     /*  Boot => Preload => Setup => Menu => Main => index.js  */
-    this.game.state.start("Preload");
+    this.game.state.start('Preload');
   }
 }
 

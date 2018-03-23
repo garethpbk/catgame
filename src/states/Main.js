@@ -1,33 +1,33 @@
 class Main extends Phaser.State {
   create() {
     // draw main tiling cloud background
-    this.game.bg_clouds = this.game.add.tileSprite(0, 0, 18048, 1920, "bg_clouds");
+    this.game.bg_clouds = this.game.add.tileSprite(0, 0, 18048, 1920, 'bg_clouds');
     // set background to scroll
     this.game.bg_clouds.autoScroll(25, 0);
 
     // add tree sprites
-    this.game.theTree = this.game.add.sprite(5.5 * this.game.multiplier, 23 * this.game.multiplier, "tree-00");
+    this.game.theTree = this.game.add.sprite(5.5 * this.game.multiplier, 23 * this.game.multiplier, 'tree-00');
     this.game.theTree.scale.setTo(2, 2);
-    this.game.theTree01 = this.game.add.sprite(9 * this.game.multiplier, 4 * this.game.multiplier, "tree-01");
+    this.game.theTree01 = this.game.add.sprite(9 * this.game.multiplier, 4 * this.game.multiplier, 'tree-01');
     this.game.theTree01.scale.setTo(2, 2);
-    this.game.theTree02 = this.game.add.sprite(29 * this.game.multiplier, 4.1 * this.game.multiplier, "tree-02");
+    this.game.theTree02 = this.game.add.sprite(29 * this.game.multiplier, 4.1 * this.game.multiplier, 'tree-02');
     this.game.theTree02.scale.setTo(2, 2);
 
     //add main tilemap
-    this.map = this.game.add.tilemap("tilemap");
+    this.map = this.game.add.tilemap('tilemap');
     // use the ground_tiles.png ('tiles') image for the tilemap
-    this.map.addTilesetImage("ground_tiles", "ground_tiles");
+    this.map.addTilesetImage('ground_tiles', 'ground_tiles');
 
     // add collision tiles
-    this.map.addTilesetImage("arcade_slopes", "slope_tiles");
-    this.slopeLayer = this.map.createLayer("SlopeLayer");
-    this.game.slopes.convertTilemapLayer(this.slopeLayer, "arcadeslopes", 65);
+    this.map.addTilesetImage('arcade_slopes', 'slope_tiles');
+    this.slopeLayer = this.map.createLayer('SlopeLayer');
+    this.game.slopes.convertTilemapLayer(this.slopeLayer, 'arcadeslopes', 65);
     this.slopeLayer.alpha = 0;
 
     // draw the decoration layer - things that don't have collision but are still part of terrain
-    this.decorationLayer = this.map.createLayer("DecorationLayer");
+    this.decorationLayer = this.map.createLayer('DecorationLayer');
     // draw the rat bounds layer - contains data to tell rats where to collide and switch direction
-    this.ratBounds = this.map.createLayer("RatBounds");
+    this.ratBounds = this.map.createLayer('RatBounds');
 
     // set collision for both map layers so that it's available to define more specifically later
     //map.setCollisionBetween(1, 64, true, groundLayer);
@@ -47,7 +47,7 @@ class Main extends Phaser.State {
      *
      * Is used in a higher-level state (Setup) in some functions, so declared in global scope here
      */
-    this.game.theCat = this.game.add.sprite(2 * this.game.multiplier, 1 * this.game.multiplier, "cat");
+    this.game.theCat = this.game.add.sprite(2 * this.game.multiplier, 1 * this.game.multiplier, 'cat');
     this.game.theCat.x = 2 * this.game.multiplier;
     this.game.theCat.y = 1 * this.game.multiplier;
     this.game.physics.arcade.enable(this.game.theCat);
@@ -57,20 +57,20 @@ class Main extends Phaser.State {
     this.game.theCat.body.bounce.y = 0.1;
     this.game.theCat.body.collideWorldBounds = true;
     this.game.theCat.frame = 36;
-    this.game.theCat.direction = "";
+    this.game.theCat.direction = '';
     this.game.theCat.isSitting = false;
     this.game.theCat.meowDelay = 0;
     this.game.theCat.biteDelay = 0;
 
-    this.game.theCat.animations.add("idleLeft", [0, 1], 5, true);
-    this.game.theCat.animations.add("left", [2, 3, 4, 5, 6, 7], 15, true);
-    this.game.theCat.animations.add("heliLeft", [18, 19, 20, 21, 22, 23], 10, true);
-    this.game.theCat.animations.add("idleHeliLeft", [24, 25, 26], 10, true);
+    this.game.theCat.animations.add('idleLeft', [0, 1], 5, true);
+    this.game.theCat.animations.add('left', [2, 3, 4, 5, 6, 7], 15, true);
+    this.game.theCat.animations.add('heliLeft', [18, 19, 20, 21, 22, 23], 10, true);
+    this.game.theCat.animations.add('idleHeliLeft', [24, 25, 26], 10, true);
 
-    this.game.theCat.animations.add("idleRight", [9, 10], 5, true);
-    this.game.theCat.animations.add("right", [11, 12, 13, 14, 15, 16], 15, true);
-    this.game.theCat.animations.add("heliRight", [27, 28, 29, 30, 31, 32], 10, true);
-    this.game.theCat.animations.add("idleHeliRight", [33, 34, 35], 10, true);
+    this.game.theCat.animations.add('idleRight', [9, 10], 5, true);
+    this.game.theCat.animations.add('right', [11, 12, 13, 14, 15, 16], 15, true);
+    this.game.theCat.animations.add('heliRight', [27, 28, 29, 30, 31, 32], 10, true);
+    this.game.theCat.animations.add('idleHeliRight', [33, 34, 35], 10, true);
 
     this.game.camera.follow(this.game.theCat);
 
@@ -182,22 +182,22 @@ class Main extends Phaser.State {
       let blockedLeft = ratSprite.body.blocked.left;
       let blockedRight = ratSprite.body.blocked.right;
 
-      if (rat.direction === "left" && !rat.dead) {
+      if (rat.direction === 'left' && !rat.dead) {
         ratSprite.body.velocity.x = -50;
-        ratSprite.animations.play("moveLeft");
+        ratSprite.animations.play('moveLeft');
         if (blockedLeft) {
-          rat.direction = "right";
+          rat.direction = 'right';
           ratSprite.body.velocity.x = 50;
-          ratSprite.animations.play("moveRight");
+          ratSprite.animations.play('moveRight');
         }
       }
-      if (rat.direction === "right" && !rat.dead) {
+      if (rat.direction === 'right' && !rat.dead) {
         ratSprite.body.velocity.x = 50;
-        ratSprite.animations.play("moveRight");
+        ratSprite.animations.play('moveRight');
         if (blockedRight) {
-          rat.direction = "left";
+          rat.direction = 'left';
           ratSprite.body.velocity.x = -50;
-          ratSprite.animations.play("moveLeft");
+          ratSprite.animations.play('moveLeft');
         }
       }
       if (ratSprite.alpha === 0) {
@@ -242,12 +242,12 @@ class Main extends Phaser.State {
         }
       }
 
-      birdSprite.animations.play("flap");
+      birdSprite.animations.play('flap');
     });
 
-    this.game.theRemainingRats.setText("Rats: " + this.game.allRats.length);
+    this.game.theRemainingRats.setText('Rats: ' + this.game.allRats.length);
 
-    this.game.theScore.setText("Cans: " + this.game.score);
+    this.game.theScore.setText('Cans: ' + this.game.score);
 
     this.game.theCat.body.velocity.x = 0;
     if (this.game.theCat.body.y === 1856) {
@@ -256,19 +256,19 @@ class Main extends Phaser.State {
 
     if (this.game.spaceKey.isDown && this.game.theHeli.currentNrg === 0) {
       this.game.theCat.animations.stop(null, false);
-      if (this.game.theCat.direction === "left") {
-        this.game.theCat.animations.play("idleLeft");
-      } else if (this.game.theCat.direction === "right") {
-        this.game.theCat.animations.play("idleRight");
+      if (this.game.theCat.direction === 'left') {
+        this.game.theCat.animations.play('idleLeft');
+      } else if (this.game.theCat.direction === 'right') {
+        this.game.theCat.animations.play('idleRight');
       }
     }
 
     if (this.game.keys.left.isDown && !this.game.spaceKey.isDown) {
       this.game.theCat.isSitting = false;
-      this.game.theCat.direction = "left";
+      this.game.theCat.direction = 'left';
       this.game.theCat.body.velocity.x = -240;
       if (this.game.theCat.body.onFloor() || this.game.theCat.body.touching.down) {
-        this.game.theCat.animations.play("left");
+        this.game.theCat.animations.play('left');
       } else {
         this.game.theCat.frame = 2;
       }
@@ -277,17 +277,17 @@ class Main extends Phaser.State {
       !this.game.keys.left.isDown &&
       !this.game.spaceKey.isDown &&
       !this.game.theCat.isSitting &&
-      this.game.theCat.direction === "left"
+      this.game.theCat.direction === 'left'
     ) {
-      this.game.theCat.animations.play("idleLeft");
+      this.game.theCat.animations.play('idleLeft');
     }
 
     if (this.game.keys.right.isDown && !this.game.spaceKey.isDown) {
       this.game.theCat.isSitting = false;
-      this.game.theCat.direction = "right";
+      this.game.theCat.direction = 'right';
       this.game.theCat.body.velocity.x = 240;
       if (this.game.theCat.body.onFloor() || this.game.theCat.body.touching.down) {
-        this.game.theCat.animations.play("right");
+        this.game.theCat.animations.play('right');
       } else {
         this.game.theCat.frame = 11;
       }
@@ -296,9 +296,9 @@ class Main extends Phaser.State {
       !this.game.keys.right.isDown &&
       !this.game.spaceKey.isDown &&
       !this.game.theCat.isSitting &&
-      this.game.theCat.direction === "right"
+      this.game.theCat.direction === 'right'
     ) {
-      this.game.theCat.animations.play("idleRight");
+      this.game.theCat.animations.play('idleRight');
     }
 
     if (this.game.keys.up.isDown && !this.game.theCat.isSitting) {
