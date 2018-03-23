@@ -40,7 +40,16 @@ class Main extends Phaser.State {
     // set world size to match size of groundLayer
     this.decorationLayer.resizeWorld();
 
+    /**
+     * Add the most important sprite - the player character
+     *
+     * Distinct from this.theCat loaded in Preload (that one is wiped)
+     *
+     * Is used in a higher-level state (Setup) in some functions, so declared in global scope here
+     */
     this.game.theCat = this.game.add.sprite(2 * this.game.multiplier, 1 * this.game.multiplier, "cat");
+    this.game.theCat.x = 2 * this.game.multiplier;
+    this.game.theCat.y = 1 * this.game.multiplier;
     this.game.physics.arcade.enable(this.game.theCat);
     this.game.theCat.body.setSize(48, 64, 18, 0);
     this.game.slopes.enable(this.game.theCat);
@@ -200,14 +209,14 @@ class Main extends Phaser.State {
       const birdSprite = bird.spriteObj;
 
       if (bird.cycleX) {
-        birdSprite.body.velocity.x = 200;
+        birdSprite.body.velocity.x = this.game.randomNumber(150, 250);
         if (birdSprite.x > bird.endX) {
           birdSprite.body.velocity.x = 0;
           bird.cycleX = false;
         }
       }
       if (!bird.cycleX) {
-        birdSprite.body.velocity.x = -200;
+        birdSprite.body.velocity.x = this.game.randomNumber(-250, -150);
         if (birdSprite.x < bird.startX) {
           birdSprite.body.velocity.x = 0;
           bird.cycleX = true;
@@ -215,16 +224,20 @@ class Main extends Phaser.State {
       }
 
       if (bird.cycleY) {
-        birdSprite.body.velocity.y = 200;
+        //birdSprite.body.velocity.y = 200;
+        birdSprite.body.gravity.y = this.game.randomNumber(100, 400);
         if (birdSprite.y > bird.endY) {
-          birdSprite.body.velocity.y = 0;
+          //birdSprite.body.velocity.y = 0;
+          birdSprite.body.gravity.y = 0;
           bird.cycleY = false;
         }
       }
       if (!bird.cycleY) {
-        birdSprite.body.velocity.y = -200;
+        //birdSprite.body.velocity.y = -200;
+        birdSprite.body.gravity.y = this.game.randomNumber(-400, -100);
         if (birdSprite.y < bird.startY) {
-          birdSprite.body.velocity.y = 0;
+          //birdSprite.body.velocity.y = 0;
+          birdSprite.body.gravity.y = 0;
           bird.cycleY = true;
         }
       }
@@ -239,6 +252,15 @@ class Main extends Phaser.State {
     this.game.theCat.body.velocity.x = 0;
     if (this.game.theCat.body.y === 1856) {
       this.game.catIsDown();
+    }
+
+    if (this.game.spaceKey.isDown && this.game.theHeli.currentNrg === 0) {
+      this.game.theCat.animations.stop(null, false);
+      if (this.game.theCat.direction === "left") {
+        this.game.theCat.animations.play("idleLeft");
+      } else if (this.game.theCat.direction === "right") {
+        this.game.theCat.animations.play("idleRight");
+      }
     }
 
     if (this.game.keys.left.isDown && !this.game.spaceKey.isDown) {

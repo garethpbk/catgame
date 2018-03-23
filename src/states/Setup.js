@@ -1,28 +1,45 @@
 class Setup extends Phaser.State {
-  preload() {}
+  /**
+   * Setup: where we really get off the ground - much of the custom game logic is here
+   * Ideally, all game logic/functions will live here, with Main being used solely for update() behavior
+   *
+   * In preload() we add audio and physics to the game; this was initially in create() but moved here as it's more 'background'
+   *
+   * In create() much of the custom game functions are set up to be triggered in Main
+   *
+   */
+  preload() {
+    /* Add audio effects to game, and what action they are tied to */
+    this.game.laserRifle = this.game.add.audio("laser"); // Last fires and has NRG
+    this.game.emptyClick = this.game.add.audio("empty"); // Laser fires and NRG is empty
+    this.game.meowClip = this.game.add.audio("meow"); // Cat sits down
+    this.game.reloadLaser = this.game.add.audio("reload"); // Powercell is picked up and NRG is not full
 
-  create() {
-    // add audio
-    this.game.laserRifle = this.game.add.audio("laser");
-    this.game.emptyClick = this.game.add.audio("empty");
-    this.game.meowClip = this.game.add.audio("meow");
-    this.game.reloadLaser = this.game.add.audio("reload");
-
-    // add and play the main background music
+    /* Add and play the main background music - currently disabled */
     //this.game.music = this.game.add.audio("featherfall");
-    //this.game.music.loopFull(0.5);
-    // start ARCADE physics engine
+    //this.game.music.loopFull(0.5); // Loops the music and plays it at 50% volume
+
+    /* Start ARCADE physics engine */
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
-    // add Arcade Slopes plugin
+    /* Add ArcadeSlopes physics plugin - allows sloped/angled collisions */
     this.game.plugins.add(Phaser.Plugin.ArcadeSlopes);
-    // set prefer y option to true - sorta smooths out slope collisions
+    /* Supposed to smooth out slope collision for platformer-style games?  I am not sure if it makes a difference */
     this.game.slopes.preferY = true;
 
-    this.game.multiplier = 64;
-    /** SETUP - STYLES, INITIAL VARS, ETC */
+    /* Just an RNG - stuck here for lack of a better place to go */
+    this.game.randomNumber = (min, max) => {
+      // Currently only used for randomizing borb flight paths in Main birdBehavior
+      return Math.floor(Math.random() * max) + min;
+    };
+  }
 
-    // set the default text style for messages
+  create() {
+    /* The tilemap uses 64x64 tiles - the multiplier is used against smaller integers to position sprites using smaller integers */
+    this.game.multiplier = 64; // This seems like an inefficient way to handle this, will look for a better way
+
+    /* Set up text styles to be used in game messages - currently 2 styles, placeholder(?)  */
     this.game.textStyle = {
+      // Primary text style, used for most messages and UI
       font: "28px Indie Flower",
       fontWeight: "800",
       fill: "white",
@@ -32,6 +49,7 @@ class Setup extends Phaser.State {
     };
 
     this.game.bigTextStyle = {
+      // Big flashy text used when game objects are completed
       font: "48px Indie Flower",
       fontWeight: "800",
       fill: "red",
@@ -40,25 +58,22 @@ class Setup extends Phaser.State {
       strokeThickness: "10"
     };
 
-    // set initial score to 0
+    /* Set initial score to 0 - currently this is tied to catfood cans picked up */
     this.game.score = 0;
 
-    // set remaining rats to 0
+    /* No rats exist yet - current object is to laser all rats */
     this.game.remainingRats = 0;
 
-    // set initial # of lives to 9, because this is a game about a cat
-    //// this value keeps track of how many lives are remaining, thus var - it will be reassigned
-    this.game.lives = 9;
-    // empty array for storing life game objects
-    this.game.gameLives = [];
-    // set initial life to 0
-    this.game.currentLife = 0;
+    /* Life system - set initial number of lives to 9, because this is a game about a cat */
+    this.game.lives = 9; // Used to keep track of how many lives are remaining
+    this.game.gameLives = []; // Empty array for storing life sprite (cat head) objects
+    this.game.currentLife = 0; // Set initial life to first life - when this is lost, moves onto 1st, through 8th
 
-    /** LEVEL DATA */
+    /* Level Objects are created here; currently only moving platforms */
 
-    // ledge template constructor - for moving platforms
     class Ledge {
-      constructor(
+      // Generates platforms that can move - started as static platforms, thus the Ledge name...may change to Platform
+      constructor( // Each instance of ledge holds properties that determine its movement path - where it starts, where it goes
         name,
         startX,
         startY,
@@ -91,11 +106,11 @@ class Setup extends Phaser.State {
       }
     }
 
-    //hold all platforms
+    /* Holds all game objects created from Ledge */
     this.game.allLedges = [];
 
-    //first ledge
-    this.game.ledgeOne = new Ledge(
+    /* The first, and currently only, ledge */
+    this.game.ledgeOne = new Ledge( // Probably will continue with "ledgeTwo, ledgeThree..." - these have to be placed by hand
       "ledgeOne",
       15 * this.game.multiplier,
       8 * this.game.multiplier,
@@ -106,17 +121,20 @@ class Setup extends Phaser.State {
       false,
       true,
       3,
-      1,
+      1, // Only use of this image currently - maybe placeholder, but I do like it
       "crate",
       true,
       null
     );
-    this.game.allLedges.push(this.game.ledgeOne);
+    this.game.allLedges.push(this.game.ledgeOne); // allLedges is array of game objects, not their sprites - that's this.game.allLedges[i].spriteObj in Main
 
-    /** PICKUPS AKA POWERUPS */
+    /**
+     * Powerups are created here - called Pickups
+     * Powerup behavior is also currently defined here, right after they're created - if more powerups are added, might separate
+     */
 
-    // powerup pickup template constructor
     class Pickup {
+      // All powerups share properties - if any without NRG are added, can nullify nrg properties
       constructor(
         name,
         have,
@@ -137,40 +155,39 @@ class Setup extends Phaser.State {
         delay
       ) {
         this.name = name;
-        this.have = have;
-        this.nrgBar = nrgBar;
-        this.maxNrg = maxNrg;
+        this.have = have; // Boolean, tracks what powerups cat has acquired
+        this.nrgBar = nrgBar; // Holds associated NRG bar object for the sprite, if it has one - so NRG bar is a property of associated powerup
+        this.maxNrg = maxNrg; // The values of these three NRG properties are used to track NRG bar fill widths and current NRG, they're the same number
         this.currentNrg = currentNrg;
         this.nrgFill = nrgFill;
         this.nrgObj = nrgObj;
         this.startX = startX;
         this.startY = startY;
         this.sprite = sprite;
-        this.gravityY = gravityY;
+        this.gravityY = gravityY; // Powerups currently have gravity enabled
         this.bounceY = bounceY;
         this.scale = scale;
         this.animation = animation;
-        this.spriteObj = spriteObj;
-        this.msg = msg;
-        this.delay = delay;
+        this.spriteObj = spriteObj; // Purposefully separated the game object from its sprite; I like having data live in a parent and the sprite an extension of that parent
+        this.msg = msg; // Text is broadcasted when cat hits the powerup
+        this.delay = delay; // An internal counter for adding space between overlap/collide events
       }
     }
 
-    // holds all created powerup pickups
+    /* Holds all game objects created from Pickup */
     this.game.allPickups = [];
 
-    // catcopter pickup
+    /* CatCopter pickup - hereafter referred to as this.game.theHeli */
     this.game.theHeli = new Pickup(
       "heli",
       false,
       { barX: 1008, barY: 50, fillX: 1011, fillY: 53, fillSprite: "nrg-fill-heli" },
       194,
-      194,
+      0,
       0,
       "",
       1 * this.game.multiplier,
-      1 * this.game.multiplier /* 36 * this.game.multiplier,
-      27 * this.game.multiplier, */,
+      1 * this.game.multiplier,
       "heli",
       400,
       0.1,
@@ -179,9 +196,9 @@ class Setup extends Phaser.State {
       null,
       "You're now a catcopter!",
       0
-    );
+    ); // This is the data for the associated NRG sprite // 36 * this.game.multiplier // 27 * this.game.multiplier
 
-    // laser eyes pickup
+    /* Laser Eyes pickup - hereafter referred to as this.game.theLaser */
     this.game.theLaser = new Pickup(
       "laser",
       false,
@@ -202,22 +219,33 @@ class Setup extends Phaser.State {
       0
     );
 
-    this.game.allPickups.push(this.game.theHeli, this.game.theLaser);
+    this.game.allPickups.push(this.game.theHeli, this.game.theLaser); // Again an array of game objects, not their sprites - this.game.allPickups[i].spriteObj
+
+    /**
+     * Here begins powerup behavior - functions that are triggered by events in the update() loop in Main
+     * All powerup behavior functions are here; adding the pickup sprites is not - it's in Main this.game.addPickups, wouldn't work in Setup
+     */
 
     this.game.shootLaser = direction => {
-      const laser = this.game.theLaser;
-      const laserSprite = laser.spriteObj;
-      const cat = this.game.theCat;
+      // When the laser fire key (F) is triggered, this runs
+      const laser = this.game.theLaser; // Remember the difference between the game object and its sprite
+      const laserSprite = laser.spriteObj; // Same pattern appears for everything here; .spriteObj property name is consistent
+      const cat = this.game.theCat; // this.game.theCat is created in Main (sprite is directly added)
       if (this.game.time.now > laser.delay && laser.currentNrg) {
+        // Two conditions: at least 2 sec have passed since last shootLaser event, and theLaser has NRG
         this.game.laserRifle.play();
-        laser.currentNrg -= 48.5;
-        laser.nrgObj.width = laser.currentNrg;
+        laser.currentNrg -= 48.5; // Max NRG is 194, laser takes 25% of max to fire each time - change to 200 max?
+        laser.nrgObj.width = laser.currentNrg; // As mentioned, currentNrg also controls width of the sprite
 
         if (cat.direction === "right") {
+          /*
+          * this.game.theLaser works by moving its spriteObj around - it doesn't create anything new, but repositions & changes visibility
+          * There is only one this.game.theLaser object (and sprite) in the game, including the powerup and fired lasers
+          */
           laserSprite.x = cat.x + 70;
           laserSprite.y = cat.y + 20;
-          laserSprite.scale.setTo(3, 2);
-          laserSprite.alpha = 1;
+          laserSprite.scale.setTo(3, 2); // Different scale from the powerup sprite
+          laserSprite.alpha = 1; // This makes the sprite visible, its default alpha is 0
         }
         if (cat.direction === "left") {
           laserSprite.x = cat.x + 15;
@@ -225,9 +253,10 @@ class Setup extends Phaser.State {
           laserSprite.scale.setTo(-3, 2);
           laserSprite.alpha = 1;
         }
-        this.game.add.tween(laserSprite).to({ alpha: 0 }, 500, Phaser.Easing.Linear.None, true, 1000);
-        laser.delay = this.game.time.now + 2000;
+        this.game.add.tween(laserSprite).to({ alpha: 0 }, 500, Phaser.Easing.Linear.None, true, 1000); // Use a tween to fade the laser out after a delay
+        laser.delay = this.game.time.now + 2000; // Can only trigger shootLaser once every 2 seconds - goes well with the recharge sound
       } else if (this.game.time.now > laser.delay) {
+        // If no laser NRG, play an empty actions and msg - also has 2 second delay
         this.game.emptyClick.play();
         var msgX = Math.floor(cat.x + cat.width / 2);
         var msgY = Math.floor(cat.y + cat.height / 2);
@@ -237,21 +266,68 @@ class Setup extends Phaser.State {
       }
     };
 
+    this.game.flyHeli = () => {
+      // Here is my favorite function in the game, the ability to fly your cat around
+      if (this.game.theHeli.have && this.game.theHeli.currentNrg) {
+        // Have to have theHeli and have NRG for it
+        if (this.game.spaceKey.isDown && this.game.theCat.frame != 36) {
+          // Space key held down for flight, can't fly from the initial cat frame
+          this.game.theCat.isSitting = false;
+          this.game.theCat.body.velocity.y = -100; // Fly upward!
+          this.game.theHeli.currentNrg--; // theHeli's NRG drops while the space bar is held, as this is called in Main update()
+          this.game.theHeli.nrgObj.width = this.game.theHeliNrgRatio * this.game.theHeli.maxNrg; // currentNRG / maxNRG determines where NRG bar width, so it shrinks as currentNRG decreases
+
+          if (!this.game.keys.left.isDown && !this.game.keys.right.isDown) {
+            // Play different animations depending on where the cat is when flying mode is triggered
+            if (this.game.theCat.direction === "left") {
+              this.game.theCat.animations.play("idleHeliLeft");
+            } else if (this.game.theCat.direction === "right") {
+              this.game.theCat.animations.play("idleHeliRight");
+            }
+          }
+
+          if (this.game.keys.left.isDown && !this.game.keys.right.isDown) {
+            // There is a sorta bug here where, if out of NRG, holding down space and left or right keys will not move you - normal movement relies on fly mode being inactive
+            this.game.theCat.body.velocity.x = -120;
+            this.game.theCat.animations.play("heliLeft");
+          } else if (this.game.keys.right.isDown && !this.game.keys.left.isDown) {
+            this.game.theCat.body.velocity.x = 120;
+            this.game.theCat.animations.play("heliRight");
+          }
+        }
+      }
+    };
+
+    /* theHeli NRG bar recharges when cat is sitting - sitCat() later in this files calls heliCharge() */
+    this.game.heliCharge = () => {
+      if (this.game.theCat.isSitting && this.game.theHeli.have) {
+        if (this.game.theHeli.currentNrg <= this.game.theHeli.maxNrg) {
+          this.game.theHeli.currentNrg++; // The opposite of decreasing the bar when flying
+          this.game.theHeli.nrgObj.width = this.game.theHeliNrgRatio * this.game.theHeli.maxNrg;
+        }
+      }
+    };
+
+    /* Is triggered when cat overlaps a powerup */
     this.game.collectPickup = (cat, pickup) => {
       const parent = pickup.parentPickup;
+      // The pickup passed in is the spriteObj, so have to get access to its parent via parentPickup property - which is added to the spriteObj when it's created in Main
       if (parent === this.game.theHeli) {
-        pickup.kill();
+        // Atm these are specific since there's only 2 powerups, probably ok to keep it this way, they are intended to be only 2 powerups
+        pickup.kill(); // Can get rid of theHeli's sprite from the game, as the flight animation is in the cat's spritesheet
+        this.game.theHeli.currentNrg = 194;
       }
       if (parent === this.game.theLaser) {
-        pickup.alpha = 0;
+        pickup.alpha = 0; // theLaser doesn't move when it gets picked up, just turns invisible; gets repositioned when shootLaser() is called
       }
       let msgX = Math.floor(this.game.theCat.x + this.game.theCat.width / 2);
       let msgY = Math.floor(this.game.theCat.y + this.game.theCat.height / 2);
       if (!parent.have) {
         let msg = this.game.add.text(msgX, msgY, parent.msg, this.game.textStyle);
+        // Not sure if doing msgs specifically each time like this, not just here but on all events, is the best way?  Maybe doesn't matter since the events happen infrequently
         msg.lifespan = 1500;
-        parent.nrgObj.width = parent.maxNrg;
-        parent.have = true;
+        parent.nrgObj.width = parent.maxNrg; // Width determined by max this time, not current
+        parent.have = true; // Player now owns this pickup
       }
     };
 
@@ -478,16 +554,16 @@ class Setup extends Phaser.State {
 
     this.game.birdOne = new Bird(
       "birdOne",
-      4 * this.game.multiplier, // startX
-      1 * this.game.multiplier, // startY
-      8 * this.game.multiplier, // endX
-      4 * this.game.multiplier, // endY
+      4 * this.game.multiplier,
+      1 * this.game.multiplier,
+      8 * this.game.multiplier,
+      4 * this.game.multiplier,
       true,
       true,
       false,
       0,
       null
-    );
+    ); // startX // startY // endX // endY
 
     this.game.allBirds.push(this.game.birdOne);
 
@@ -498,6 +574,7 @@ class Setup extends Phaser.State {
         this.game.slopes.enable(theBird);
         theBird.enableBody = true;
         theBird.body.collideWorldBounds = true;
+        theBird.body.gravity.y = 200;
         theBird.animations.add("flap", [0, 1, 2, 3, 4, 5, 6], 15, true);
         theBird.parentBird = bird;
         theBird.scale.setTo(1.5, 1.5);
@@ -551,42 +628,6 @@ class Setup extends Phaser.State {
         lifeMsg.lifespan = 1500;
         this.game.currentLife++;
         this.game.lives--;
-      }
-    };
-
-    this.game.flyHeli = () => {
-      if (this.game.theHeli.have && this.game.theHeli.currentNrg) {
-        if (this.game.spaceKey.isDown && this.game.theCat.frame != 36) {
-          this.game.theCat.isSitting = false;
-          this.game.theCat.body.velocity.y = -100;
-          this.game.theHeli.currentNrg--;
-          this.game.theHeli.nrgObj.width = this.game.theHeliNrgRatio * this.game.theHeli.maxNrg;
-
-          if (!this.game.keys.left.isDown && !this.game.keys.right.isDown) {
-            if (this.game.theCat.direction === "left") {
-              this.game.theCat.animations.play("idleHeliLeft");
-            } else if (this.game.theCat.direction === "right") {
-              this.game.theCat.animations.play("idleHeliRight");
-            }
-          }
-
-          if (this.game.keys.left.isDown && !this.game.keys.right.isDown) {
-            this.game.theCat.body.velocity.x = -120;
-            this.game.theCat.animations.play("heliLeft");
-          } else if (this.game.keys.right.isDown && !this.game.keys.left.isDown) {
-            this.game.theCat.body.velocity.x = 120;
-            this.game.theCat.animations.play("heliRight");
-          }
-        }
-      }
-    };
-
-    this.game.heliCharge = () => {
-      if (this.game.theCat.isSitting && this.game.theHeli.have) {
-        if (this.game.theHeli.currentNrg <= this.game.theHeli.maxNrg) {
-          this.game.theHeli.currentNrg++;
-          this.game.theHeli.nrgObj.width = this.game.theHeliNrgRatio * this.game.theHeli.maxNrg;
-        }
       }
     };
 
@@ -672,7 +713,7 @@ class Setup extends Phaser.State {
       this.game.ratsDead = true;
     };
 
-    this.game.state.start("Main");
+    this.game.state.start("Menu");
   }
 }
 

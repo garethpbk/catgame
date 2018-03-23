@@ -6,3 +6,4 @@ ruby-meow.orrg - Gareth bk
 laser-rifle.ogg - Skorpio / opengameart.org/content/laser-rifle
 gun-click.wave - KlawyKogut / freesound.org/people/klawykogut/sounds/154934
 reload.ogg - nioczkus / freesound.org/people/nioczkus/sounds/396331
+bird sprite - https://opengameart.org/content/a-bald-eagle
