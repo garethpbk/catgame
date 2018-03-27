@@ -343,8 +343,7 @@ class Setup extends Phaser.State {
         this.spriteObj = spriteObj;
       }
     }
-    // Holds all food can game objects
-    this.game.allFoodCans = [];
+    this.game.allFoodCans = []; // Holds all food can game objects
 
     /* Food currently just keeps score, intention is to have 4 food cans restore 1 life */
     this.game.foodCanOne = new FoodCan('foodCanOne', 9 * this.game.multiplier, 10 * this.game.multiplier, null);
@@ -388,16 +387,17 @@ class Setup extends Phaser.State {
     }
     this.game.allPowerCells = []; // Hold all powercell game objects
 
+    /* Currently only one powercell in game, will add more when level layout finshed */
     this.game.powerCellOne = new PowerCell(
       'powerCellOne',
       6 * this.game.multiplier,
       4.5 * this.game.multiplier,
       null,
       0
-    );
+    ); // May need to add dynamically generated cells so that ammo never runs out (time them maybe?)
     this.game.allPowerCells.push(this.game.powerCellOne);
 
-    // create power cell items - gets called in Main
+    /* Creates a sprite for each powercell game object and adds it ot the world */
     this.game.addPowerCells = () => {
       this.game.allPowerCells.map(cell => {
         const theCell = this.game.add.sprite(cell.startX, cell.startY, 'powercell');
@@ -452,9 +452,9 @@ class Setup extends Phaser.State {
         this.spriteObj = spriteObj;
       }
     }
-    // By now this pattern should look familiar
-    this.game.allRats = [];
+    this.game.allRats = []; // By now this pattern should look familiar
 
+    /* Add some rats to the game - currently six */
     this.game.ratOne = new Rat('ratOne', 2 * this.game.multiplier, 11 * this.game.multiplier, 'left', false, 0, null);
     this.game.ratTwo = new Rat('ratTwo', 24 * this.game.multiplier, 26 * this.game.multiplier, 'right', false, 0, null);
     this.game.ratThree = new Rat(
@@ -487,9 +487,9 @@ class Setup extends Phaser.State {
       this.game.ratSix
     );
 
+    /* Add the rat sprites to the world for each rat game object, and pin to parent */
     this.game.addRats = () => {
       this.game.allRats.map(rat => {
-        // Each rat game object gets an associated sprite, and the sprite gets the game object as its parent
         const theRat = this.game.add.sprite(rat.startX, rat.startY, 'rat');
         this.game.physics.arcade.enable(theRat);
         this.game.slopes.enable(theRat);

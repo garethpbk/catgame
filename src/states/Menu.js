@@ -1,3 +1,5 @@
+import { createTransition } from 'phaser-state-transition';
+
 class Menu extends Phaser.State {
   /* Menu state - as it sounds, this is the game menu */
   create() {
@@ -21,7 +23,19 @@ class Menu extends Phaser.State {
 
     function startMain() {
       // Called when the start button is clicked on
-      this.game.state.start('Main');
+
+      const SlideLeftOut = {
+        ease: Phaser.Easing.Exponential.InOut,
+        duration: 2e3,
+        intro: false,
+        props: {
+          x: function(game) {
+            return -game.width;
+          }
+        }
+      };
+
+      this.game.state.start('Main', SlideLeftOut);
     }
   }
 }
