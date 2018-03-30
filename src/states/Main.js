@@ -13,15 +13,18 @@ class Main extends Phaser.State {
     this.game.theTree02 = this.game.add.sprite(29 * this.game.multiplier, 4.1 * this.game.multiplier, 'tree-02');
     this.game.theTree02.scale.setTo(2, 2);
 
+    // add metal door sprite
+    this.game.facilityDoor = this.game.add.sprite(199 * this.game.multiplier, 18 * this.game.multiplier, 'metal-door');
+
     //add main tilemap
-    this.map = this.game.add.tilemap('tilemap');
+    this.map = this.game.add.tilemap('jungle-tilemap');
     // use the ground_tiles.png ('tiles') image for the tilemap
     this.map.addTilesetImage('ground_tiles', 'ground_tiles');
 
     // add collision tiles
     this.map.addTilesetImage('arcade_slopes', 'slope_tiles');
     this.slopeLayer = this.map.createLayer('SlopeLayer');
-    this.game.slopes.convertTilemapLayer(this.slopeLayer, 'arcadeslopes', 65);
+    this.game.slopes.convertTilemapLayer(this.slopeLayer, 'arcadeslopes', 73);
     this.slopeLayer.alpha = 0;
 
     // draw the decoration layer - things that don't have collision but are still part of terrain
@@ -47,9 +50,9 @@ class Main extends Phaser.State {
      *
      * Is used in a higher-level state (Setup) in some functions, so declared in global scope here
      */
-    this.game.theCat = this.game.add.sprite(2 * this.game.multiplier, 1 * this.game.multiplier, 'cat');
-    this.game.theCat.x = 2 * this.game.multiplier;
-    this.game.theCat.y = 1 * this.game.multiplier;
+    this.game.theCat = this.game.add.sprite(10 * this.game.multiplier, 26 * this.game.multiplier, 'cat');
+    //this.game.theCat.x = 2 * this.game.multiplier;
+    //this.game.theCat.y = 1 * this.game.multiplier;
     this.game.physics.arcade.enable(this.game.theCat);
     this.game.theCat.body.setSize(48, 64, 18, 0);
     this.game.slopes.enable(this.game.theCat);
@@ -121,6 +124,7 @@ class Main extends Phaser.State {
 
   update() {
     //this.game.debug.body(this.game.theCat);
+    this.slopeLayer.debug = true;
 
     const catCollide = this.game.physics.arcade.collide(this.game.theCat, this.slopeLayer);
 
@@ -157,10 +161,40 @@ class Main extends Phaser.State {
       this.game.physics.arcade.overlap(this.game.theLaser.spriteObj, bird.spriteObj, this.game.killABird, null, this);
     });
 
-    const moveLedgeY = this.game.allLedges.forEach(ledge => {
+    const nearDoor = () => {
+      let catX = this.game.theCat.x;
+      let doorX = this.game.facilityDoor.x;
+
+      if (doorX - catX < 100) {
+        this.game.moveDoor;
+      }
+    };
+    nearDoor();
+
+    const moveLedges = this.game.allLedges.forEach(ledge => {
       const ledgeSprite = ledge.spriteObj;
 
-      if (ledge.moveY) {
+      if (ledge.moveY && ledge.moveX) {
+        if (ledge.cycle) {
+          ledgeSprite.body.velocity.x += 1;
+          ledgeSprite.body.velocity.y -= 1;
+          if (ledgeSprite.y < ledge.minY && ledgeSprite.x > ledge.maxX) {
+            ledgeSprite.body.velocity.y = 0;
+            ledgeSprite.body.velocity.x = 0;
+            ledge.cycle = false;
+          }
+        } else if (!ledge.cycle) {
+          ledgeSprite.body.velocity.x -= 1;
+          ledgeSprite.body.velocity.y += 1;
+          if (ledgeSprite.y > ledge.maxY && ledgeSprite.x < ledge.minX) {
+            ledgeSprite.body.velocity.y = 0;
+            ledgeSprite.body.velocity.x = 0;
+            ledge.cycle = true;
+          }
+        }
+      }
+
+      if (ledge.moveY && !ledge.moveX) {
         if (ledge.cycle) {
           ledgeSprite.body.velocity.y += 2;
           if (ledgeSprite.y > ledge.maxY) {
@@ -171,6 +205,22 @@ class Main extends Phaser.State {
           ledgeSprite.body.velocity.y -= 2;
           if (ledgeSprite.y < ledge.minY) {
             ledgeSprite.body.velocity.y = 0;
+            ledge.cycle = true;
+          }
+        }
+      }
+
+      if (ledge.moveX && !ledge.moveY) {
+        if (ledge.cycle) {
+          ledgeSprite.body.velocity.x += 2;
+          if (ledgeSprite.x > ledge.maxX) {
+            ledgeSprite.body.velocity.x = 0;
+            ledge.cycle = false;
+          }
+        } else if (!ledge.cycle) {
+          ledgeSprite.body.velocity.x -= 2;
+          if (ledgeSprite.x < ledge.minX) {
+            ledgeSprite.body.velocity.x = 0;
             ledge.cycle = true;
           }
         }

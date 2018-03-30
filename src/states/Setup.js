@@ -110,15 +110,15 @@ class Setup extends Phaser.State {
     /* Holds all game objects created from Ledge */
     this.game.allLedges = [];
 
-    /* The first, and currently only, ledge */
-    this.game.ledgeOne = new Ledge(
-      'ledgeOne',
-      15 * this.game.multiplier,
-      8 * this.game.multiplier,
+    /* Ledges are all named sequentially, with an X, Y, or XY at the end to indicate which direction they move */
+    this.game.ledgeOneY = new Ledge(
+      'ledgeOneY',
+      71 * this.game.multiplier,
+      25 * this.game.multiplier,
       0,
-      1450,
+      28 * this.game.multiplier,
       0,
-      700,
+      20 * this.game.multiplier,
       false,
       true,
       3,
@@ -126,8 +126,84 @@ class Setup extends Phaser.State {
       'crate',
       true,
       null
-    ); // Probably will continue with "ledgeTwo, ledgeThree..." - these have to be placed by hand // Only use of this image currently - maybe placeholder, but I do like it
-    this.game.allLedges.push(this.game.ledgeOne); // allLedges is array of game objects, not their sprites - that's this.game.allLedges[i].spriteObj in Main
+    );
+
+    this.game.ledgeTwoX = new Ledge(
+      'ledgeTwoX',
+      135 * this.game.multiplier,
+      28 * this.game.multiplier,
+      143 * this.game.multiplier,
+      0,
+      133 * this.game.multiplier,
+      0,
+      true,
+      false,
+      3,
+      1,
+      'crate',
+      true,
+      null
+    );
+
+    this.game.ledgeThreeX = new Ledge(
+      'ledgeThreeX',
+      162 * this.game.multiplier,
+      26 * this.game.multiplier,
+      170 * this.game.multiplier,
+      0,
+      162 * this.game.multiplier,
+      0,
+      true,
+      false,
+      3,
+      1,
+      'crate',
+      true,
+      null
+    );
+
+    this.game.ledgeFourY = new Ledge(
+      'ledgeFourY',
+      172 * this.game.multiplier,
+      21 * this.game.multiplier,
+      0,
+      27 * this.game.multiplier,
+      0,
+      21 * this.game.multiplier,
+      false,
+      true,
+      2,
+      1,
+      'crate',
+      true,
+      null
+    );
+
+    this.game.ledgeFiveXY = new Ledge(
+      'ledgeFiveXY',
+      190 * this.game.multiplier,
+      26 * this.game.multiplier,
+      195 * this.game.multiplier,
+      26 * this.game.multiplier,
+      190 * this.game.multiplier,
+      21 * this.game.multiplier,
+      true,
+      true,
+      2,
+      1,
+      'crate',
+      true,
+      null
+    );
+
+    // Probably will continue with "ledgeTwoX, ledgeThree..." - these have to be placed by hand // Only use of this image currently - maybe placeholder, but I do like it
+    this.game.allLedges.push(
+      this.game.ledgeOneY,
+      this.game.ledgeTwoX,
+      this.game.ledgeThreeX,
+      this.game.ledgeFourY,
+      this.game.ledgeFiveXY
+    ); // allLedges is array of game objects, not their sprites - that's this.game.allLedges[i].spriteObj in Main
 
     /**
      * Powerups are created here - called Pickups
@@ -722,6 +798,11 @@ class Setup extends Phaser.State {
       this.game.add.tween(msg).to({ alpha: 0 }, 2000, Phaser.Easing.Linear.None, true, 1500);
       msg.lifespan = 3500;
       this.game.ratsDead = true;
+    };
+
+    this.game.moveDoor = () => {
+      console.log('move door');
+      this.game.add.tween(this.game.facilityDoor).to({ alpha: 0 }, 2000, Phaser.Easing.Linear.None, true, 1500);
     };
 
     this.game.state.start('Menu');
