@@ -67,6 +67,7 @@ class Preload extends Phaser.State {
     /* Load image assets for the tiles */
     this.game.load.image('ground_tiles', 'assets/tiles/ground_tiles.png'); // Main ground tiles - DecorationLayer
     this.game.load.image('slope_tiles', 'assets/tiles/arcade_slopes.png'); // Collision tiles - SlopeLayer
+    this.game.load.spritesheet('waves', 'assets/tiles/waves.png', 64, 64);
 
     /**
      * Load game music, for the current level - plan is to have 3 music loops, one for each level

@@ -800,9 +800,19 @@ class Setup extends Phaser.State {
       this.game.ratsDead = true;
     };
 
-    this.game.moveDoor = () => {
-      console.log('move door');
-      this.game.add.tween(this.game.facilityDoor).to({ alpha: 0 }, 2000, Phaser.Easing.Linear.None, true, 1500);
+    this.game.moveDoor = direction => {
+      if (direction === 'right') {
+        this.game.facilityDoor.open = true;
+        this.game.add
+          .tween(this.game.facilityDoor)
+          .to({ x: 200 * this.game.multiplier }, 300, Phaser.Easing.Linear.None, true);
+      } else if (direction === 'left') {
+        this.game.facilityDoor.open = false;
+        this.game.add
+          .tween(this.game.facilityDoor)
+          .to({ x: 199 * this.game.multiplier }, 300, Phaser.Easing.Linear.None, true);
+      }
+      this.game.facilityDoor.delay = this.game.time.now + 500;
     };
 
     this.game.state.start('Menu');

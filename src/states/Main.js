@@ -13,8 +13,10 @@ class Main extends Phaser.State {
     this.game.theTree02 = this.game.add.sprite(29 * this.game.multiplier, 4.1 * this.game.multiplier, 'tree-02');
     this.game.theTree02.scale.setTo(2, 2);
 
-    // add metal door sprite
-    this.game.facilityDoor = this.game.add.sprite(199 * this.game.multiplier, 18 * this.game.multiplier, 'metal-door');
+    // add wave sprites
+    this.game.waves = this.game.add.tileSprite(0, 29 * this.game.multiplier, 200 * 64, 64, 'waves', 0);
+    this.game.waves.animations.add('wave', [0, 1], 2, true);
+    this.game.waves.animations.play('wave');
 
     //add main tilemap
     this.map = this.game.add.tilemap('jungle-tilemap');
@@ -40,6 +42,11 @@ class Main extends Phaser.State {
     // make the ratBounds tiles invisible
     this.ratBounds.alpha = 0;
 
+    // add metal door sprite
+    this.game.facilityDoor = this.game.add.sprite(199 * this.game.multiplier, 18 * this.game.multiplier, 'metal-door');
+    this.game.facilityDoor.open = false;
+    this.game.facilityDoor.delay = 0;
+
     // set world size to match size of groundLayer
     this.decorationLayer.resizeWorld();
 
@@ -50,7 +57,7 @@ class Main extends Phaser.State {
      *
      * Is used in a higher-level state (Setup) in some functions, so declared in global scope here
      */
-    this.game.theCat = this.game.add.sprite(10 * this.game.multiplier, 26 * this.game.multiplier, 'cat');
+    this.game.theCat = this.game.add.sprite(187 * this.game.multiplier, 25 * this.game.multiplier, 'cat');
     //this.game.theCat.x = 2 * this.game.multiplier;
     //this.game.theCat.y = 1 * this.game.multiplier;
     this.game.physics.arcade.enable(this.game.theCat);
@@ -165,8 +172,12 @@ class Main extends Phaser.State {
       let catX = this.game.theCat.x;
       let doorX = this.game.facilityDoor.x;
 
-      if (doorX - catX < 100) {
-        this.game.moveDoor;
+      if (this.game.time.now > this.game.facilityDoor.delay) {
+        if (catX > 197 * this.game.multiplier && !this.game.facilityDoor.open) {
+          this.game.moveDoor('right');
+        } else if (catX < 197 * this.game.multiplier && this.game.facilityDoor.open) {
+          this.game.moveDoor('left');
+        }
       }
     };
     nearDoor();
