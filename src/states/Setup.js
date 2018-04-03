@@ -682,6 +682,52 @@ class Setup extends Phaser.State {
       }
     };
 
+    // fish class
+    class Fish {
+      constructor(name, startX, startY, endX, endY, cycleX, cycleY, dead, delay, spriteObj) {
+        this.name = name;
+        this.startX = startX;
+        this.startY = startY;
+        this.endX = endX;
+        this.endY = endY;
+        this.cycleX = cycleX;
+        this.cycleY = cycleY;
+        this.dead = dead;
+        this.delay = delay;
+        this.spriteObj = spriteObj;
+      }
+    }
+    this.game.allFish = [];
+
+    this.game.fishOne = new Fish(
+      'fishOne',
+      192 * this.game.multiplier,
+      30 * this.game.multiplier,
+      192 * this.game.multiplier,
+      23 * this.game.multiplier,
+      true,
+      true,
+      false,
+      0,
+      null
+    );
+
+    this.game.allFish.push(this.game.fishOne);
+
+    this.game.addFish = () => {
+      this.game.allFish.map(fish => {
+        const theFish = this.game.add.sprite(fish.startX, fish.startY, 'fish');
+        this.game.physics.arcade.enable(theFish);
+        this.game.slopes.enable(theFish);
+        theFish.enableBody = true;
+        theFish.animations.add('gulp', [0, 1, 2], 5, true);
+        theFish.parentfish = fish;
+        theFish.scale.setTo(1, 1);
+        theFish.anchor.setTo(0.5);
+        fish.spriteObj = theFish;
+      });
+    };
+
     this.game.sayMeow = direction => {
       if (this.game.time.now > this.game.theCat.meowDelay) {
         let meowX, meowY;

@@ -13,6 +13,8 @@ class Main extends Phaser.State {
     this.game.theTree02 = this.game.add.sprite(29 * this.game.multiplier, 4.1 * this.game.multiplier, 'tree-02');
     this.game.theTree02.scale.setTo(2, 2);
 
+    this.game.addFish();
+
     // add wave sprites
     this.game.waves = this.game.add.tileSprite(0, 29 * this.game.multiplier, 200 * 64, 64, 'waves', 0);
     this.game.waves.animations.add('wave', [0, 1], 2, true);
@@ -304,6 +306,30 @@ class Main extends Phaser.State {
       }
 
       birdSprite.animations.play('flap');
+    });
+
+    const fishBehavior = this.game.allFish.forEach(fish => {
+      const fishSprite = fish.spriteObj;
+
+      if (fish.cycleY) {
+        fishSprite.body.velocity.y = -200;
+        fishSprite.angle = 0;
+        if (fishSprite.y < fish.endY) {
+          fishSprite.body.velocity.y = 0;
+          fish.cycleY = false;
+        }
+      }
+
+      if (!fish.cycleY) {
+        fishSprite.body.velocity.y = 200;
+        fishSprite.angle = 180;
+        if (fishSprite.y > fish.startY) {
+          fishSprite.body.velocity.y = 0;
+          fish.cycleY = true;
+        }
+      }
+
+      fishSprite.animations.play('gulp');
     });
 
     this.game.theRemainingRats.setText('Rats: ' + this.game.allRats.length);
