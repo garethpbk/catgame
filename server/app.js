@@ -5,8 +5,8 @@ const app = express();
 
 app.use(express.static('./dist'));
 
-app.get('/', function(req, res) {
-  res.writeHead(200, { 'Content-Type': 'text/html' });
+app.get('/', function(err, req, res) {
+  err ? console.log(err) : res.writeHead(200, { 'Content-Type': 'text/html' });
 });
 
 module.exports = app;
