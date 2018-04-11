@@ -16,8 +16,8 @@ class Setup extends Phaser.State {
     this.game.reloadLaser = this.game.add.audio('reload'); // Powercell is picked up and NRG is not full
 
     /* Add and play the main background music - currently disabled */
-    //this.game.music = this.game.add.audio("featherfall");
-    //this.game.music.loopFull(0.5); // Loops the music and plays it at 50% volume
+    this.game.music = this.game.add.audio('featherfall');
+    this.game.music.loopFull(0.5); // Loops the music and plays it at 50% volume
 
     /* Start ARCADE physics engine */
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -110,15 +110,15 @@ class Setup extends Phaser.State {
     /* Holds all game objects created from Ledge */
     this.game.allLedges = [];
 
-    /* The first, and currently only, ledge */
-    this.game.ledgeOne = new Ledge(
-      'ledgeOne',
-      15 * this.game.multiplier,
-      8 * this.game.multiplier,
+    /* Ledges are all named sequentially, with an X, Y, or XY at the end to indicate which direction they move */
+    this.game.ledgeOneY = new Ledge(
+      'ledgeOneY',
+      71 * this.game.multiplier,
+      25 * this.game.multiplier,
       0,
-      1450,
+      28 * this.game.multiplier,
       0,
-      700,
+      20 * this.game.multiplier,
       false,
       true,
       3,
@@ -126,8 +126,84 @@ class Setup extends Phaser.State {
       'crate',
       true,
       null
-    ); // Probably will continue with "ledgeTwo, ledgeThree..." - these have to be placed by hand // Only use of this image currently - maybe placeholder, but I do like it
-    this.game.allLedges.push(this.game.ledgeOne); // allLedges is array of game objects, not their sprites - that's this.game.allLedges[i].spriteObj in Main
+    );
+
+    this.game.ledgeTwoX = new Ledge(
+      'ledgeTwoX',
+      135 * this.game.multiplier,
+      28 * this.game.multiplier,
+      143 * this.game.multiplier,
+      0,
+      133 * this.game.multiplier,
+      0,
+      true,
+      false,
+      3,
+      1,
+      'crate',
+      true,
+      null
+    );
+
+    this.game.ledgeThreeX = new Ledge(
+      'ledgeThreeX',
+      162 * this.game.multiplier,
+      26 * this.game.multiplier,
+      170 * this.game.multiplier,
+      0,
+      162 * this.game.multiplier,
+      0,
+      true,
+      false,
+      3,
+      1,
+      'crate',
+      true,
+      null
+    );
+
+    this.game.ledgeFourY = new Ledge(
+      'ledgeFourY',
+      172 * this.game.multiplier,
+      21 * this.game.multiplier,
+      0,
+      27 * this.game.multiplier,
+      0,
+      21 * this.game.multiplier,
+      false,
+      true,
+      2,
+      1,
+      'crate',
+      true,
+      null
+    );
+
+    this.game.ledgeFiveXY = new Ledge(
+      'ledgeFiveXY',
+      190 * this.game.multiplier,
+      26 * this.game.multiplier,
+      195 * this.game.multiplier,
+      26 * this.game.multiplier,
+      190 * this.game.multiplier,
+      21 * this.game.multiplier,
+      true,
+      true,
+      2,
+      1,
+      'crate',
+      true,
+      null
+    );
+
+    // Probably will continue with "ledgeTwoX, ledgeThree..." - these have to be placed by hand // Only use of this image currently - maybe placeholder, but I do like it
+    this.game.allLedges.push(
+      this.game.ledgeOneY,
+      this.game.ledgeTwoX,
+      this.game.ledgeThreeX,
+      this.game.ledgeFourY,
+      this.game.ledgeFiveXY
+    ); // allLedges is array of game objects, not their sprites - that's this.game.allLedges[i].spriteObj in Main
 
     /**
      * Powerups are created here - called Pickups
@@ -187,8 +263,8 @@ class Setup extends Phaser.State {
       0,
       0,
       '',
-      1 * this.game.multiplier,
-      1 * this.game.multiplier,
+      184 * this.game.multiplier,
+      25 * this.game.multiplier,
       'heli',
       400,
       0.1,
@@ -208,8 +284,8 @@ class Setup extends Phaser.State {
       194,
       0,
       '',
-      1 * this.game.multiplier,
-      1 * this.game.multiplier,
+      185 * this.game.multiplier,
+      25 * this.game.multiplier,
       'laser',
       0,
       0.1,
@@ -565,10 +641,10 @@ class Setup extends Phaser.State {
 
     this.game.birdOne = new Bird(
       'birdOne',
-      4 * this.game.multiplier,
-      1 * this.game.multiplier,
-      8 * this.game.multiplier,
-      4 * this.game.multiplier,
+      190 * this.game.multiplier,
+      20 * this.game.multiplier,
+      194 * this.game.multiplier,
+      24 * this.game.multiplier,
       true,
       true,
       false,
@@ -604,6 +680,52 @@ class Setup extends Phaser.State {
         this.game.allBirds.splice(parentIndex, 1);
         parentBird.delay = this.game.time.now + 1500;
       }
+    };
+
+    // fish class
+    class Fish {
+      constructor(name, startX, startY, endX, endY, cycleX, cycleY, dead, delay, spriteObj) {
+        this.name = name;
+        this.startX = startX;
+        this.startY = startY;
+        this.endX = endX;
+        this.endY = endY;
+        this.cycleX = cycleX;
+        this.cycleY = cycleY;
+        this.dead = dead;
+        this.delay = delay;
+        this.spriteObj = spriteObj;
+      }
+    }
+    this.game.allFish = [];
+
+    this.game.fishOne = new Fish(
+      'fishOne',
+      192 * this.game.multiplier,
+      30 * this.game.multiplier,
+      192 * this.game.multiplier,
+      23 * this.game.multiplier,
+      true,
+      true,
+      false,
+      0,
+      null
+    );
+
+    this.game.allFish.push(this.game.fishOne);
+
+    this.game.addFish = () => {
+      this.game.allFish.map(fish => {
+        const theFish = this.game.add.sprite(fish.startX, fish.startY, 'fish');
+        this.game.physics.arcade.enable(theFish);
+        this.game.slopes.enable(theFish);
+        theFish.enableBody = true;
+        theFish.animations.add('gulp', [0, 1, 2], 5, true);
+        theFish.parentfish = fish;
+        theFish.scale.setTo(1, 1);
+        theFish.anchor.setTo(0.5);
+        fish.spriteObj = theFish;
+      });
     };
 
     this.game.sayMeow = direction => {
@@ -722,6 +844,21 @@ class Setup extends Phaser.State {
       this.game.add.tween(msg).to({ alpha: 0 }, 2000, Phaser.Easing.Linear.None, true, 1500);
       msg.lifespan = 3500;
       this.game.ratsDead = true;
+    };
+
+    this.game.moveDoor = direction => {
+      if (direction === 'right') {
+        this.game.facilityDoor.open = true;
+        this.game.add
+          .tween(this.game.facilityDoor)
+          .to({ x: 200 * this.game.multiplier }, 300, Phaser.Easing.Linear.None, true);
+      } else if (direction === 'left') {
+        this.game.facilityDoor.open = false;
+        this.game.add
+          .tween(this.game.facilityDoor)
+          .to({ x: 199 * this.game.multiplier }, 300, Phaser.Easing.Linear.None, true);
+      }
+      this.game.facilityDoor.delay = this.game.time.now + 500;
     };
 
     this.game.state.start('Menu');

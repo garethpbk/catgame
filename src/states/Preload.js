@@ -23,9 +23,10 @@ class Preload extends Phaser.State {
     this.load.setPreloadSprite(this.preloadBar);
 
     /* Add the menu graphics */
-    this.game.load.spritesheet('frame', 'assets/ui/frame-sm.png', 320, 160, 3, 0, 0);
+    this.game.load.spritesheet('frame', 'assets/ui/frame.png', 1280, 640, 3, 0, 0);
     this.game.load.spritesheet('start-button', 'assets/ui/start-button.png', 500, 100, 3, 0, 0);
     this.game.load.image('title', 'assets/ui/title.png');
+    this.game.load.image('cursor', 'assets/ui/cursor.png');
 
     /* Load the sky & cloud background image - lives in /tiles but might move it  */
     this.game.load.image('bg_clouds', 'assets/tiles/bg_clouds.png');
@@ -33,14 +34,18 @@ class Preload extends Phaser.State {
     /* Load effects sprites */
     this.game.load.image('burst', 'assets/objects/burst.png'); // Appears when an enemy overlaps with the cat
     this.game.load.image('laserburst', 'assets/objects/laserburst.png'); // Appears when the laser overlaps with an enemy
+
+    /* Load object sprites */
     this.game.load.image('crate', 'assets/objects/crate.png'); // Decorative sprite, currently used for the moving platform texture
     this.game.load.image('tree-00', 'assets/objects/tree-00.png'); // Trees 1, 2, 3...placeholder from OpenGameArt; they're nice though
     this.game.load.image('tree-01', 'assets/objects/tree-01.png');
     this.game.load.image('tree-02', 'assets/objects/tree-02.png');
+    this.game.load.image('metal-door', 'assets/objects/metal-door.png'); // Metal door for facility
 
     /* Load enemy spritesheets */
     this.game.load.spritesheet('rat', 'assets/actors/rat.png', 32, 20);
     this.game.load.spritesheet('bird', 'assets/actors/bird.png', 43, 21);
+    this.game.load.spritesheet('fish', 'assets/actors/fish.png', 26, 64);
 
     /* Load pickup & item spritesheets and images */
     this.game.load.image('can', 'assets/pickups/can.png');
@@ -60,9 +65,11 @@ class Preload extends Phaser.State {
      * Using TILED (http://www.mapeditor.org/) to create tile layouts; it generates the JSON that's included here - HIGHLY RECOMMENDED
      */
     this.game.load.tilemap('tilemap', 'assets/tiles/cattiles.json', null, Phaser.Tilemap.TILED_JSON);
+    this.game.load.tilemap('jungle-tilemap', 'assets/tiles/jungle-level.json', null, Phaser.Tilemap.TILED_JSON);
     /* Load image assets for the tiles */
     this.game.load.image('ground_tiles', 'assets/tiles/ground_tiles.png'); // Main ground tiles - DecorationLayer
     this.game.load.image('slope_tiles', 'assets/tiles/arcade_slopes.png'); // Collision tiles - SlopeLayer
+    this.game.load.spritesheet('waves', 'assets/tiles/waves.png', 64, 64);
 
     /**
      * Load game music, for the current level - plan is to have 3 music loops, one for each level
