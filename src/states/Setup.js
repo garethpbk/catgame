@@ -16,8 +16,8 @@ class Setup extends Phaser.State {
     this.game.reloadLaser = this.game.add.audio('reload'); // Powercell is picked up and NRG is not full
 
     /* Add and play the main background music - currently disabled */
-    //this.game.music = this.game.add.audio("featherfall");
-    //this.game.music.loopFull(0.5); // Loops the music and plays it at 50% volume
+    this.game.music = this.game.add.audio('featherfall');
+    this.game.music.loopFull(0.5); // Loops the music and plays it at 50% volume
 
     /* Start ARCADE physics engine */
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -263,8 +263,8 @@ class Setup extends Phaser.State {
       0,
       0,
       '',
-      1 * this.game.multiplier,
-      1 * this.game.multiplier,
+      184 * this.game.multiplier,
+      25 * this.game.multiplier,
       'heli',
       400,
       0.1,
@@ -284,8 +284,8 @@ class Setup extends Phaser.State {
       194,
       0,
       '',
-      1 * this.game.multiplier,
-      1 * this.game.multiplier,
+      185 * this.game.multiplier,
+      25 * this.game.multiplier,
       'laser',
       0,
       0.1,
@@ -641,10 +641,10 @@ class Setup extends Phaser.State {
 
     this.game.birdOne = new Bird(
       'birdOne',
-      4 * this.game.multiplier,
-      1 * this.game.multiplier,
-      8 * this.game.multiplier,
-      4 * this.game.multiplier,
+      190 * this.game.multiplier,
+      20 * this.game.multiplier,
+      194 * this.game.multiplier,
+      24 * this.game.multiplier,
       true,
       true,
       false,

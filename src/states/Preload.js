@@ -23,9 +23,10 @@ class Preload extends Phaser.State {
     this.load.setPreloadSprite(this.preloadBar);
 
     /* Add the menu graphics */
-    this.game.load.spritesheet('frame', 'assets/ui/frame-sm.png', 320, 160, 3, 0, 0);
+    this.game.load.spritesheet('frame', 'assets/ui/frame.png', 1280, 640, 3, 0, 0);
     this.game.load.spritesheet('start-button', 'assets/ui/start-button.png', 500, 100, 3, 0, 0);
     this.game.load.image('title', 'assets/ui/title.png');
+    this.game.load.image('cursor', 'assets/ui/cursor.png');
 
     /* Load the sky & cloud background image - lives in /tiles but might move it  */
     this.game.load.image('bg_clouds', 'assets/tiles/bg_clouds.png');
