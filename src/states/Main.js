@@ -60,8 +60,8 @@ class Main extends Phaser.State {
      * Is used in a higher-level state (Setup) in some functions, so declared in global scope here
      */
     this.game.theCat = this.game.add.sprite(187 * this.game.multiplier, 25 * this.game.multiplier, 'cat');
-    //this.game.theCat.x = 2 * this.game.multiplier;
-    //this.game.theCat.y = 1 * this.game.multiplier;
+    this.game.theCat.x = 1 * this.game.multiplier;
+    this.game.theCat.y = 23 * this.game.multiplier;
     this.game.physics.arcade.enable(this.game.theCat);
     this.game.theCat.body.setSize(48, 64, 18, 0);
     this.game.slopes.enable(this.game.theCat);

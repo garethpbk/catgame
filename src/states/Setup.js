@@ -531,12 +531,12 @@ class Setup extends Phaser.State {
     this.game.allRats = []; // By now this pattern should look familiar
 
     /* Add some rats to the game - currently six */
-    this.game.ratOne = new Rat('ratOne', 2 * this.game.multiplier, 11 * this.game.multiplier, 'left', false, 0, null);
-    this.game.ratTwo = new Rat('ratTwo', 24 * this.game.multiplier, 26 * this.game.multiplier, 'right', false, 0, null);
+    this.game.ratOne = new Rat('ratOne', 10 * this.game.multiplier, 26 * this.game.multiplier, 'left', false, 0, null);
+    this.game.ratTwo = new Rat('ratTwo', 25 * this.game.multiplier, 26 * this.game.multiplier, 'right', false, 0, null);
     this.game.ratThree = new Rat(
       'ratThree',
-      2 * this.game.multiplier,
-      20 * this.game.multiplier,
+      45 * this.game.multiplier,
+      26 * this.game.multiplier,
       'left',
       false,
       0,
@@ -544,15 +544,40 @@ class Setup extends Phaser.State {
     );
     this.game.ratFour = new Rat(
       'ratFour',
-      14 * this.game.multiplier,
+      78 * this.game.multiplier,
+      19 * this.game.multiplier,
+      'right',
+      false,
+      0,
+      null
+    );
+    this.game.ratFive = new Rat(
+      'ratFive',
+      82 * this.game.multiplier,
+      24 * this.game.multiplier,
+      'left',
+      false,
+      0,
+      null
+    );
+    this.game.ratSix = new Rat(
+      'ratSix',
+      115 * this.game.multiplier,
       24 * this.game.multiplier,
       'right',
       false,
       0,
       null
     );
-    this.game.ratFive = new Rat('ratFive', 38 * this.game.multiplier, 4 * this.game.multiplier, 'left', false, 0, null);
-    this.game.ratSix = new Rat('ratSix', 28 * this.game.multiplier, 7 * this.game.multiplier, 'right', false, 0, null);
+    this.game.ratSeven = new Rat(
+      'ratSix',
+      148 * this.game.multiplier,
+      26 * this.game.multiplier,
+      'right',
+      false,
+      0,
+      null
+    );
 
     this.game.allRats.push(
       this.game.ratOne,
@@ -560,7 +585,8 @@ class Setup extends Phaser.State {
       this.game.ratThree,
       this.game.ratFour,
       this.game.ratFive,
-      this.game.ratSix
+      this.game.ratSix,
+      this.game.ratSeven
     );
 
     /* Add the rat sprites to the world for each rat game object, and pin to parent */
@@ -573,8 +599,8 @@ class Setup extends Phaser.State {
         theRat.body.gravity.y = 400;
         theRat.body.bounceY = 0.1;
         theRat.body.collideWorldBounds = true;
-        theRat.animations.add('moveLeft', [0, 1, 2], 15, true);
-        theRat.animations.add('moveRight', [3, 4, 5], 15, true);
+        theRat.animations.add('moveLeft', [4, 5, 6, 7], 10, true);
+        theRat.animations.add('moveRight', [0, 1, 2, 3], 10, true);
         theRat.parentRat = rat;
         rat.spriteObj = theRat;
       });
@@ -650,9 +676,35 @@ class Setup extends Phaser.State {
       false,
       0,
       null
-    ); // startX // startY // endX // endY
+    );
 
-    this.game.allBirds.push(this.game.birdOne);
+    this.game.birdTwo = new Bird(
+      'birdTwo',
+      133 * this.game.multiplier,
+      27 * this.game.multiplier,
+      143 * this.game.multiplier,
+      20 * this.game.multiplier,
+      true,
+      true,
+      false,
+      0,
+      null
+    );
+
+    this.game.birdThree = new Bird(
+      'birdThree',
+      163 * this.game.multiplier,
+      24 * this.game.multiplier,
+      174 * this.game.multiplier,
+      17 * this.game.multiplier,
+      true,
+      true,
+      false,
+      0,
+      null
+    );
+
+    this.game.allBirds.push(this.game.birdOne, this.game.birdTwo, this.game.birdThree);
 
     this.game.addBirds = () => {
       this.game.allBirds.map(bird => {
@@ -701,9 +753,48 @@ class Setup extends Phaser.State {
 
     this.game.fishOne = new Fish(
       'fishOne',
+      89 * this.game.multiplier,
+      30 * this.game.multiplier,
+      89 * this.game.multiplier,
+      25 * this.game.multiplier,
+      true,
+      true,
+      false,
+      0,
+      null
+    );
+
+    this.game.fishTwo = new Fish(
+      'fishTwo',
+      113 * this.game.multiplier,
+      30 * this.game.multiplier,
+      113 * this.game.multiplier,
+      25 * this.game.multiplier,
+      true,
+      true,
+      false,
+      0,
+      null
+    );
+
+    this.game.fishFour = new Fish(
+      'fishFour',
       192 * this.game.multiplier,
       30 * this.game.multiplier,
       192 * this.game.multiplier,
+      24 * this.game.multiplier,
+      true,
+      true,
+      false,
+      0,
+      null
+    );
+
+    this.game.fishThree = new Fish(
+      'fishThree',
+      118 * this.game.multiplier,
+      30 * this.game.multiplier,
+      118 * this.game.multiplier,
       23 * this.game.multiplier,
       true,
       true,
@@ -712,7 +803,7 @@ class Setup extends Phaser.State {
       null
     );
 
-    this.game.allFish.push(this.game.fishOne);
+    this.game.allFish.push(this.game.fishOne, this.game.fishTwo, this.game.fishThree, this.game.fishFour);
 
     this.game.addFish = () => {
       this.game.allFish.map(fish => {
