@@ -28,7 +28,7 @@ class Setup extends Phaser.State {
 
     /* Just an RNG - stuck here for lack of a better place to go */
     this.game.randomNumber = (min, max) => {
-      // Currently only used for randomizing borb flight paths in Main birdBehavior
+      // Currently only used for randomizing borb flight paths in Main bugBehavior
       return Math.floor(Math.random() * max) + min;
     };
   }
@@ -648,8 +648,8 @@ class Setup extends Phaser.State {
       }
     };
 
-    // bird class
-    class Bird {
+    // bug class
+    class Bug {
       constructor(name, startX, startY, endX, endY, cycleX, cycleY, dead, delay, spriteObj) {
         this.name = name;
         this.startX = startX;
@@ -663,10 +663,10 @@ class Setup extends Phaser.State {
         this.spriteObj = spriteObj;
       }
     }
-    this.game.allBirds = [];
+    this.game.allBugs = [];
 
-    this.game.birdOne = new Bird(
-      'birdOne',
+    this.game.bugOne = new Bug(
+      'bugOne',
       190 * this.game.multiplier,
       20 * this.game.multiplier,
       194 * this.game.multiplier,
@@ -678,8 +678,8 @@ class Setup extends Phaser.State {
       null
     );
 
-    this.game.birdTwo = new Bird(
-      'birdTwo',
+    this.game.bugTwo = new Bug(
+      'bugTwo',
       133 * this.game.multiplier,
       27 * this.game.multiplier,
       143 * this.game.multiplier,
@@ -691,8 +691,8 @@ class Setup extends Phaser.State {
       null
     );
 
-    this.game.birdThree = new Bird(
-      'birdThree',
+    this.game.bugThree = new Bug(
+      'bugThree',
       163 * this.game.multiplier,
       24 * this.game.multiplier,
       174 * this.game.multiplier,
@@ -704,33 +704,33 @@ class Setup extends Phaser.State {
       null
     );
 
-    this.game.allBirds.push(this.game.birdOne, this.game.birdTwo, this.game.birdThree);
+    this.game.allBugs.push(this.game.bugOne, this.game.bugTwo, this.game.bugThree);
 
-    this.game.addBirds = () => {
-      this.game.allBirds.map(bird => {
-        const theBird = this.game.add.sprite(bird.startX, bird.startY, 'bird');
-        this.game.physics.arcade.enable(theBird);
-        this.game.slopes.enable(theBird);
-        theBird.enableBody = true;
-        theBird.body.collideWorldBounds = true;
-        theBird.body.gravity.y = 200;
-        theBird.animations.add('flap', [0, 1, 2, 3, 4, 5, 6], 15, true);
-        theBird.parentBird = bird;
-        theBird.scale.setTo(1.5, 1.5);
-        bird.spriteObj = theBird;
+    this.game.addBugs = () => {
+      this.game.allBugs.map(bug => {
+        const theBug = this.game.add.sprite(bug.startX, bug.startY, 'bug');
+        this.game.physics.arcade.enable(theBug);
+        this.game.slopes.enable(theBug);
+        theBug.enableBody = true;
+        theBug.body.collideWorldBounds = true;
+        theBug.body.gravity.y = 200;
+        theBug.animations.add('buzz', [0, 1, 2, 3, 4, 5], 20, true);
+        theBug.parentBug = bug;
+        theBug.scale.setTo(1, 1);
+        bug.spriteObj = theBug;
       });
     };
 
-    this.game.killABird = (laser, bird) => {
-      const parentBird = bird.parentBird;
-      const parentIndex = this.game.allBirds.indexOf(parentBird);
-      if (laser.alpha === 1 && this.game.time.now > parentBird.delay) {
-        parentBird.dead = true;
-        const laserBurst = this.game.add.sprite(bird.x, bird.y, 'laserburst');
+    this.game.killABug = (laser, bug) => {
+      const parentBug = bug.parentBug;
+      const parentIndex = this.game.allBugs.indexOf(parentBug);
+      if (laser.alpha === 1 && this.game.time.now > parentBug.delay) {
+        parentBug.dead = true;
+        const laserBurst = this.game.add.sprite(bug.x, bug.y, 'laserburst');
         laserBurst.lifespan = 1000;
-        this.game.add.tween(bird).to({ alpha: 0 }, 500, Phaser.Easing.Linear.None, true);
-        this.game.allBirds.splice(parentIndex, 1);
-        parentBird.delay = this.game.time.now + 1500;
+        this.game.add.tween(bug).to({ alpha: 0 }, 500, Phaser.Easing.Linear.None, true);
+        this.game.allBugs.splice(parentIndex, 1);
+        parentBug.delay = this.game.time.now + 1500;
       }
     };
 

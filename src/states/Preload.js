@@ -44,7 +44,7 @@ class Preload extends Phaser.State {
 
     /* Load enemy spritesheets */
     this.game.load.spritesheet('rat', 'assets/actors/rat-og.png', 54, 30);
-    this.game.load.spritesheet('bird', 'assets/actors/bird.png', 43, 21);
+    this.game.load.spritesheet('bug', 'assets/actors/bug.png', 98, 36);
     this.game.load.spritesheet('fish', 'assets/actors/fish.png', 26, 64);
 
     /* Load pickup & item spritesheets and images */

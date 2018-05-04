@@ -60,7 +60,7 @@ class Main extends Phaser.State {
      * Is used in a higher-level state (Setup) in some functions, so declared in global scope here
      */
     this.game.theCat = this.game.add.sprite(187 * this.game.multiplier, 25 * this.game.multiplier, 'cat');
-    this.game.theCat.x = 1 * this.game.multiplier;
+    this.game.theCat.x = 130 * this.game.multiplier;
     this.game.theCat.y = 23 * this.game.multiplier;
     this.game.physics.arcade.enable(this.game.theCat);
     this.game.theCat.body.setSize(48, 64, 18, 0);
@@ -126,7 +126,7 @@ class Main extends Phaser.State {
     this.game.addFoodCans();
     this.game.addPowerCells();
     this.game.addRats();
-    this.game.addBirds();
+    this.game.addBugs();
 
     ///
   }
@@ -165,9 +165,9 @@ class Main extends Phaser.State {
       this.game.physics.arcade.overlap(this.game.theLaser.spriteObj, rat.spriteObj, this.game.killARat, null, this);
     });
 
-    this.game.allBirds.forEach(bird => {
-      this.game.physics.arcade.overlap(this.game.theCat, bird.spriteObj, this.game.biteTheCat, null, this);
-      this.game.physics.arcade.overlap(this.game.theLaser.spriteObj, bird.spriteObj, this.game.killABird, null, this);
+    this.game.allBugs.forEach(bug => {
+      this.game.physics.arcade.overlap(this.game.theCat, bug.spriteObj, this.game.biteTheCat, null, this);
+      this.game.physics.arcade.overlap(this.game.theLaser.spriteObj, bug.spriteObj, this.game.killABug, null, this);
     });
 
     const nearDoor = () => {
@@ -268,44 +268,44 @@ class Main extends Phaser.State {
       }
     });
 
-    const birdBehavior = this.game.allBirds.forEach(bird => {
-      const birdSprite = bird.spriteObj;
+    const bugBehavior = this.game.allBugs.forEach(bug => {
+      const bugSprite = bug.spriteObj;
 
-      if (bird.cycleX) {
-        birdSprite.body.velocity.x = this.game.randomNumber(150, 250);
-        if (birdSprite.x > bird.endX) {
-          birdSprite.body.velocity.x = 0;
-          bird.cycleX = false;
+      if (bug.cycleX) {
+        bugSprite.body.velocity.x = this.game.randomNumber(150, 250);
+        if (bugSprite.x > bug.endX) {
+          bugSprite.body.velocity.x = 0;
+          bug.cycleX = false;
         }
       }
-      if (!bird.cycleX) {
-        birdSprite.body.velocity.x = this.game.randomNumber(-250, -150);
-        if (birdSprite.x < bird.startX) {
-          birdSprite.body.velocity.x = 0;
-          bird.cycleX = true;
-        }
-      }
-
-      if (bird.cycleY) {
-        //birdSprite.body.velocity.y = 200;
-        birdSprite.body.gravity.y = this.game.randomNumber(100, 400);
-        if (birdSprite.y > bird.endY) {
-          //birdSprite.body.velocity.y = 0;
-          birdSprite.body.gravity.y = 0;
-          bird.cycleY = false;
-        }
-      }
-      if (!bird.cycleY) {
-        //birdSprite.body.velocity.y = -200;
-        birdSprite.body.gravity.y = this.game.randomNumber(-400, -100);
-        if (birdSprite.y < bird.startY) {
-          //birdSprite.body.velocity.y = 0;
-          birdSprite.body.gravity.y = 0;
-          bird.cycleY = true;
+      if (!bug.cycleX) {
+        bugSprite.body.velocity.x = this.game.randomNumber(-250, -150);
+        if (bugSprite.x < bug.startX) {
+          bugSprite.body.velocity.x = 0;
+          bug.cycleX = true;
         }
       }
 
-      birdSprite.animations.play('flap');
+      if (bug.cycleY) {
+        //bugSprite.body.velocity.y = 200;
+        bugSprite.body.gravity.y = this.game.randomNumber(100, 400);
+        if (bugSprite.y > bug.endY) {
+          //bugSprite.body.velocity.y = 0;
+          bugSprite.body.gravity.y = 0;
+          bug.cycleY = false;
+        }
+      }
+      if (!bug.cycleY) {
+        //bugSprite.body.velocity.y = -200;
+        bugSprite.body.gravity.y = this.game.randomNumber(-400, -100);
+        if (bugSprite.y < bug.startY) {
+          //bugSprite.body.velocity.y = 0;
+          bugSprite.body.gravity.y = 0;
+          bug.cycleY = true;
+        }
+      }
+
+      bugSprite.animations.play('buzz');
     });
 
     const fishBehavior = this.game.allFish.forEach(fish => {
