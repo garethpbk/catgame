@@ -1,11 +1,19 @@
 class Main extends Phaser.State {
   create() {
     // draw main tiling cloud background
-    this.game.bg_clouds = this.game.add.tileSprite(0, 0, 18048, 1920, 'bg_clouds');
+    //this.game.bg_clouds = this.game.add.tileSprite(0, 0, 18048, 1920, 'bg_clouds');
     // set background to scroll
-    this.game.bg_clouds.autoScroll(25, 0);
+    //this.game.bg_clouds.autoScroll(25, 0);
+
+    this.game.bg_sky_dark = this.game.add.tileSprite(0, 19 * this.game.multiplier, 18048, 768, 'bg_sky_dark');
+    this.game.bg_sky_dark.autoScroll(25, 0);
+    this.game.bg_trees_2 = this.game.add.tileSprite(0, 19 * this.game.multiplier, 18048, 768, 'bg_trees_2');
+    this.game.bg_trees = this.game.add.tileSprite(0, 19 * this.game.multiplier, 18048, 768, 'bg_trees');
 
     // add tree sprites
+    this.game.spookyTree = this.game.add.sprite(125 * this.game.multiplier, 23 * this.game.multiplier, 'spooky-tree');
+    this.game.weirdTree = this.game.add.sprite(133 * this.game.multiplier, 21 * this.game.multiplier, 'weird-tree');
+    this.game.palmTree = this.game.add.sprite(137 * this.game.multiplier, 20 * this.game.multiplier, 'palm-tree');
     this.game.theTree = this.game.add.sprite(5.5 * this.game.multiplier, 23 * this.game.multiplier, 'tree-00');
     this.game.theTree.scale.setTo(2, 2);
     this.game.theTree01 = this.game.add.sprite(9 * this.game.multiplier, 4 * this.game.multiplier, 'tree-01');
@@ -24,6 +32,7 @@ class Main extends Phaser.State {
     this.map = this.game.add.tilemap('jungle-tilemap');
     // use the ground_tiles.png ('tiles') image for the tilemap
     this.map.addTilesetImage('ground_tiles', 'ground_tiles');
+    this.map.addTilesetImage('custom_tiles', 'custom_tiles');
 
     // add collision tiles
     this.map.addTilesetImage('arcade_slopes', 'slope_tiles');
@@ -31,8 +40,11 @@ class Main extends Phaser.State {
     this.game.slopes.convertTilemapLayer(this.slopeLayer, 'arcadeslopes', 73);
     this.slopeLayer.alpha = 0;
 
+    this.backgroundLayer = this.map.createLayer('BackgroundLayer');
+
     // draw the decoration layer - things that don't have collision but are still part of terrain
     this.decorationLayer = this.map.createLayer('DecorationLayer');
+    this.objectLayer = this.map.createLayer('ObjectLayer');
     // draw the rat bounds layer - contains data to tell rats where to collide and switch direction
     this.ratBounds = this.map.createLayer('RatBounds');
 
@@ -59,6 +71,9 @@ class Main extends Phaser.State {
      *
      * Is used in a higher-level state (Setup) in some functions, so declared in global scope here
      */
+    this.game.patty = this.game.add.sprite(128 * this.game.multiplier, 27.25 * this.game.multiplier, 'patty');
+    this.game.patty.animations.add('idleLeft', [0, 1], 2, true);
+
     this.game.theCat = this.game.add.sprite(187 * this.game.multiplier, 25 * this.game.multiplier, 'cat');
     this.game.theCat.x = 130 * this.game.multiplier;
     this.game.theCat.y = 23 * this.game.multiplier;
@@ -134,6 +149,9 @@ class Main extends Phaser.State {
   update() {
     //this.game.debug.body(this.game.theCat);
     this.slopeLayer.debug = true;
+
+    this.game.bg_trees_2.tilePosition.set(-this.game.camera.x / 16, 0);
+    this.game.bg_trees.tilePosition.set(-this.game.camera.x / 64, 0);
 
     const catCollide = this.game.physics.arcade.collide(this.game.theCat, this.slopeLayer);
 
@@ -335,6 +353,8 @@ class Main extends Phaser.State {
     this.game.theRemainingRats.setText('Rats: ' + this.game.allRats.length);
 
     this.game.theScore.setText('Cans: ' + this.game.score);
+
+    this.game.patty.animations.play('idleLeft');
 
     this.game.theCat.body.velocity.x = 0;
     if (this.game.theCat.body.y === 1856) {

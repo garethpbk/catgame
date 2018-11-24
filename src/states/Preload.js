@@ -29,7 +29,11 @@ class Preload extends Phaser.State {
     this.game.load.image('cursor', 'assets/ui/cursor.png');
 
     /* Load the sky & cloud background image - lives in /tiles but might move it  */
-    this.game.load.image('bg_clouds', 'assets/tiles/bg_clouds.png');
+    //this.game.load.image('bg_clouds', 'assets/tiles/bg_clouds.png');
+
+    this.game.load.image('bg_sky_dark', 'assets/tiles/bg_sky_dark.png');
+    this.game.load.image('bg_trees_2', 'assets/tiles/bg_trees_2.png');
+    this.game.load.image('bg_trees', 'assets/tiles/bg_trees.png');
 
     /* Load effects sprites */
     this.game.load.image('burst', 'assets/objects/burst.png'); // Appears when an enemy overlaps with the cat
@@ -40,12 +44,17 @@ class Preload extends Phaser.State {
     this.game.load.image('tree-00', 'assets/objects/tree-00.png'); // Trees 1, 2, 3...placeholder from OpenGameArt; they're nice though
     this.game.load.image('tree-01', 'assets/objects/tree-01.png');
     this.game.load.image('tree-02', 'assets/objects/tree-02.png');
+    this.game.load.image('spooky-tree', 'assets/objects/spooky-tree.png');
+    this.game.load.image('weird-tree', 'assets/objects/weird-tree.png');
+    this.game.load.image('palm-tree', 'assets/objects/palm-tree.png');
     this.game.load.image('metal-door', 'assets/objects/metal-door.png'); // Metal door for facility
 
     /* Load enemy spritesheets */
     this.game.load.spritesheet('rat', 'assets/actors/rat-og.png', 54, 30);
     this.game.load.spritesheet('bug', 'assets/actors/bug.png', 98, 36);
     this.game.load.spritesheet('fish', 'assets/actors/fish.png', 26, 64);
+
+    this.game.load.spritesheet('patty', 'assets/actors/patty.png', 100, 51);
 
     /* Load pickup & item spritesheets and images */
     this.game.load.image('can', 'assets/pickups/can.png');
@@ -68,6 +77,7 @@ class Preload extends Phaser.State {
     this.game.load.tilemap('jungle-tilemap', 'assets/tiles/jungle-level.json', null, Phaser.Tilemap.TILED_JSON);
     /* Load image assets for the tiles */
     this.game.load.image('ground_tiles', 'assets/tiles/ground_tiles.png'); // Main ground tiles - DecorationLayer
+    this.game.load.image('custom_tiles', 'assets/tiles/custom_tiles.png');
     this.game.load.image('slope_tiles', 'assets/tiles/arcade_slopes.png'); // Collision tiles - SlopeLayer
     this.game.load.spritesheet('waves', 'assets/tiles/waves.png', 64, 64);
 
