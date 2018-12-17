@@ -2,22 +2,35 @@ class Main extends Phaser.State {
   create() {
     // draw main tiling cloud background
     //this.game.bg_clouds = this.game.add.tileSprite(0, 0, 18048, 1920, 'bg_clouds');
-    // set background to scroll
+    // set background to
     //this.game.bg_clouds.autoScroll(25, 0);
 
-    this.game.bg_sky_dark = this.game.add.tileSprite(0, 19 * this.game.multiplier, 18048, 768, 'bg_sky_dark');
-    this.game.bg_sky_dark.autoScroll(25, 0);
-    this.game.bg_trees_2 = this.game.add.tileSprite(0, 19 * this.game.multiplier, 18048, 768, 'bg_trees_2');
-    this.game.bg_trees = this.game.add.tileSprite(0, 19 * this.game.multiplier, 18048, 768, 'bg_trees');
+    // this.game.bg_sky_dark = this.game.add.tileSprite(0, 19 * this.game.multiplier, 18048, 768, 'bg_sky_dark');
+    // this.game.bg_sky_dark.autoScroll(25, 0);
+    //this.game.bg_trees_2 = this.game.add.tileSprite(0, 19 * this.game.multiplier, 18048, 768, 'bg_trees_2');
+    //this.game.bg_trees = this.game.add.tileSprite(0, 19 * this.game.multiplier, 18048, 768, 'bg_trees');
+
+    this.game.bg_water = this.game.add.tileSprite(0, 16 * this.game.multiplier, 18048, 1024, 'bg_water');
+    this.game.bg_reflection = this.game.add.tileSprite(0, 16 * this.game.multiplier, 18048, 1024, 'bg_reflection');
+    this.game.bg_sky_two = this.game.add.tileSprite(0, 16 * this.game.multiplier, 18048, 1024, 'bg_sky_two');
+    //this.game.bg_sky_two.autoScroll(4, 0);
+    this.game.bg_sky_one = this.game.add.tileSprite(0, 16 * this.game.multiplier, 18048, 1024, 'bg_sky_one');
+    //this.game.bg_sky_one.autoScroll(8, 0);
+    this.game.bg_island = this.game.add.tileSprite(0, 16 * this.game.multiplier, 18048, 1024, 'bg_island');
+    this.game.bg_volcano = this.game.add.tileSprite(0, 16 * this.game.multiplier, 18048, 1024, 'bg_volcano');
+
+    //this.game.bg_trees = this.game.add.tileSprite(0, 16 * this.game.multiplier, 18048, 1024, 'bg_trees');
+
+    //this.game.bg_vines = this.game.add.tileSprite(0, 16 * this.game.multiplier, 18048, 1024, 'bg_vines');
 
     // add tree sprites
     this.game.spookyTree = this.game.add.sprite(125 * this.game.multiplier, 23 * this.game.multiplier, 'spooky-tree');
     this.game.weirdTree = this.game.add.sprite(133 * this.game.multiplier, 21 * this.game.multiplier, 'weird-tree');
-    this.game.palmTree = this.game.add.sprite(137 * this.game.multiplier, 20 * this.game.multiplier, 'palm-tree');
-    this.game.theTree = this.game.add.sprite(5.5 * this.game.multiplier, 23 * this.game.multiplier, 'tree-00');
-    this.game.theTree.scale.setTo(2, 2);
-    this.game.theTree01 = this.game.add.sprite(9 * this.game.multiplier, 4 * this.game.multiplier, 'tree-01');
-    this.game.theTree01.scale.setTo(2, 2);
+    this.game.palmTree = this.game.add.sprite(4 * this.game.multiplier, 21 * this.game.multiplier, 'palm-tree');
+    //this.game.theTree = this.game.add.sprite(5.5 * this.game.multiplier, 23 * this.game.multiplier, 'tree-00');
+    //this.game.theTree.scale.setTo(2, 2);
+    //this.game.theTree01 = this.game.add.sprite(9 * this.game.multiplier, 4 * this.game.multiplier, 'tree-01');
+    //this.game.theTree01.scale.setTo(2, 2);
     this.game.theTree02 = this.game.add.sprite(29 * this.game.multiplier, 4.1 * this.game.multiplier, 'tree-02');
     this.game.theTree02.scale.setTo(2, 2);
 
@@ -75,7 +88,7 @@ class Main extends Phaser.State {
     this.game.patty.animations.add('idleLeft', [0, 1], 2, true);
 
     this.game.theCat = this.game.add.sprite(187 * this.game.multiplier, 25 * this.game.multiplier, 'cat');
-    this.game.theCat.x = 130 * this.game.multiplier;
+    this.game.theCat.x = 1 * this.game.multiplier;
     this.game.theCat.y = 23 * this.game.multiplier;
     this.game.physics.arcade.enable(this.game.theCat);
     this.game.theCat.body.setSize(48, 64, 18, 0);
@@ -150,8 +163,18 @@ class Main extends Phaser.State {
     //this.game.debug.body(this.game.theCat);
     this.slopeLayer.debug = true;
 
-    this.game.bg_trees_2.tilePosition.set(-this.game.camera.x / 16, 0);
-    this.game.bg_trees.tilePosition.set(-this.game.camera.x / 64, 0);
+    //this.game.bg_trees_2.tilePosition.set(-this.game.camera.x / 16, 0);
+    //this.game.bg_trees.tilePosition.set(-this.game.camera.x / 64, 0);
+
+    //this.game.bg_trees.tilePosition.set(-this.game.camera.x / 16, 0);
+    //this.game.bg_vines.tilePosition.set(-this.game.camera.x / 64, 0);
+
+    //this.game.bg_sky.tilePosition.set(-this.game.camera.x / 16, 0);
+    this.game.bg_island.tilePosition.set(-this.game.camera.x / 32, 0);
+    this.game.bg_reflection.tilePosition.set(-this.game.camera.x / 32, 0);
+    this.game.bg_volcano.tilePosition.set(-this.game.camera.x / 32, 0);
+    this.game.bg_sky_one.tilePosition.set(-this.game.camera.x / 48, 0);
+    this.game.bg_sky_two.tilePosition.set(-this.game.camera.x / 40, 0);
 
     const catCollide = this.game.physics.arcade.collide(this.game.theCat, this.slopeLayer);
 

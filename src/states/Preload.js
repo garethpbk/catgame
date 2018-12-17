@@ -29,11 +29,18 @@ class Preload extends Phaser.State {
     this.game.load.image('cursor', 'assets/ui/cursor.png');
 
     /* Load the sky & cloud background image - lives in /tiles but might move it  */
-    //this.game.load.image('bg_clouds', 'assets/tiles/bg_clouds.png');
+    // this.game.load.image('bg_clouds', 'assets/tiles/bg_clouds.png');
 
-    this.game.load.image('bg_sky_dark', 'assets/tiles/bg_sky_dark.png');
-    this.game.load.image('bg_trees_2', 'assets/tiles/bg_trees_2.png');
-    this.game.load.image('bg_trees', 'assets/tiles/bg_trees.png');
+    // this.game.load.image('bg_sky_dark', 'assets/tiles/bg_sky_dark.png');
+    // this.game.load.image('bg_trees_2', 'assets/tiles/bg_trees_2.png');
+    // this.game.load.image('bg_trees', 'assets/tiles/bg_trees.png');
+
+    this.game.load.image('bg_sky_one', 'assets/bg/beach/sky_one.png');
+    this.game.load.image('bg_sky_two', 'assets/bg/beach/sky_two.png');
+    this.game.load.image('bg_water', 'assets/bg/beach/water.png');
+    this.game.load.image('bg_island', 'assets/bg/beach/island.png');
+    this.game.load.image('bg_reflection', 'assets/bg/beach/reflection.png');
+    this.game.load.image('bg_volcano', 'assets/bg/beach/volcano.png');
 
     /* Load effects sprites */
     this.game.load.image('burst', 'assets/objects/burst.png'); // Appears when an enemy overlaps with the cat
