@@ -10,13 +10,13 @@ class Setup extends Phaser.State {
    */
   preload() {
     /* Add audio effects to game, and what action they are tied to */
-    this.game.laserRifle = this.game.add.audio('laser'); // Last fires and has NRG
-    this.game.emptyClick = this.game.add.audio('empty'); // Laser fires and NRG is empty
-    this.game.meowClip = this.game.add.audio('meow'); // Cat sits down
-    this.game.reloadLaser = this.game.add.audio('reload'); // Powercell is picked up and NRG is not full
+    this.game.laserRifle = this.game.add.audio("laser"); // Last fires and has NRG
+    this.game.emptyClick = this.game.add.audio("empty"); // Laser fires and NRG is empty
+    this.game.meowClip = this.game.add.audio("meow"); // Cat sits down
+    this.game.reloadLaser = this.game.add.audio("reload"); // Powercell is picked up and NRG is not full
 
     /* Add and play the main background music - currently disabled */
-    this.game.music = this.game.add.audio('featherfall');
+    this.game.music = this.game.add.audio("featherfall");
     this.game.music.loopFull(0.5); // Loops the music and plays it at 50% volume
 
     /* Start ARCADE physics engine */
@@ -40,22 +40,22 @@ class Setup extends Phaser.State {
     /* Set up text styles to be used in game messages - currently 2 styles, placeholder(?)  */
     this.game.textStyle = {
       // Primary text style, used for most messages and UI
-      font: '28px Indie Flower',
-      fontWeight: '800',
-      fill: 'white',
-      align: 'center',
-      stroke: 'black',
-      strokeThickness: '5'
+      font: "28px Indie Flower",
+      fontWeight: "800",
+      fill: "white",
+      align: "center",
+      stroke: "black",
+      strokeThickness: "5"
     };
 
     this.game.bigTextStyle = {
       // Big flashy text used when game objects are completed
-      font: '48px Indie Flower',
-      fontWeight: '800',
-      fill: 'red',
-      align: 'center',
-      stroke: 'black',
-      strokeThickness: '10'
+      font: "48px Indie Flower",
+      fontWeight: "800",
+      fill: "red",
+      align: "center",
+      stroke: "black",
+      strokeThickness: "10"
     };
 
     /* Set initial score to 0 - currently this is tied to catfood cans picked up */
@@ -112,7 +112,7 @@ class Setup extends Phaser.State {
 
     /* Ledges are all named sequentially, with an X, Y, or XY at the end to indicate which direction they move */
     this.game.ledgeOneY = new Ledge(
-      'ledgeOneY',
+      "ledgeOneY",
       71 * this.game.multiplier,
       25 * this.game.multiplier,
       0,
@@ -123,13 +123,13 @@ class Setup extends Phaser.State {
       true,
       3,
       1,
-      'crate',
+      "crate",
       true,
       null
     );
 
     this.game.ledgeTwoX = new Ledge(
-      'ledgeTwoX',
+      "ledgeTwoX",
       135 * this.game.multiplier,
       28 * this.game.multiplier,
       143 * this.game.multiplier,
@@ -140,13 +140,13 @@ class Setup extends Phaser.State {
       false,
       3,
       1,
-      'crate',
+      "crate",
       true,
       null
     );
 
     this.game.ledgeThreeX = new Ledge(
-      'ledgeThreeX',
+      "ledgeThreeX",
       162 * this.game.multiplier,
       26 * this.game.multiplier,
       170 * this.game.multiplier,
@@ -157,13 +157,13 @@ class Setup extends Phaser.State {
       false,
       3,
       1,
-      'crate',
+      "crate",
       true,
       null
     );
 
     this.game.ledgeFourY = new Ledge(
-      'ledgeFourY',
+      "ledgeFourY",
       172 * this.game.multiplier,
       21 * this.game.multiplier,
       0,
@@ -174,13 +174,13 @@ class Setup extends Phaser.State {
       true,
       2,
       1,
-      'crate',
+      "crate",
       true,
       null
     );
 
     this.game.ledgeFiveXY = new Ledge(
-      'ledgeFiveXY',
+      "ledgeFiveXY",
       190 * this.game.multiplier,
       26 * this.game.multiplier,
       195 * this.game.multiplier,
@@ -191,7 +191,7 @@ class Setup extends Phaser.State {
       true,
       2,
       1,
-      'crate',
+      "crate",
       true,
       null
     );
@@ -256,43 +256,55 @@ class Setup extends Phaser.State {
 
     /* CatCopter pickup - hereafter referred to as this.game.theHeli */
     this.game.theHeli = new Pickup(
-      'heli',
+      "heli",
       false,
-      { barX: 1008, barY: 50, fillX: 1011, fillY: 53, fillSprite: 'nrg-fill-heli' },
+      {
+        barX: 1008,
+        barY: 50,
+        fillX: 1011,
+        fillY: 53,
+        fillSprite: "nrg-fill-heli"
+      },
       194,
       0,
       0,
-      '',
-      184 * this.game.multiplier,
+      "",
+      65 * this.game.multiplier,
       25 * this.game.multiplier,
-      'heli',
+      "heli",
       400,
       0.1,
       { x: 1, y: 1 },
-      { name: 'rotate', frames: [0, 1, 2], fps: 15, loop: true },
+      { name: "rotate", frames: [0, 1, 2], fps: 15, loop: true },
       null,
-      "You're now a catcopter!",
+      "You're now a catcopter! Hold space! Down to recharge!",
       0
     ); // This is the data for the associated NRG sprite // 36 * this.game.multiplier // 27 * this.game.multiplier
 
     /* Laser Eyes pickup - hereafter referred to as this.game.theLaser */
     this.game.theLaser = new Pickup(
-      'laser',
+      "laser",
       false,
-      { barX: 1008, barY: 75, fillX: 1011, fillY: 78, fillSprite: 'nrg-fill-laser' },
+      {
+        barX: 1008,
+        barY: 75,
+        fillX: 1011,
+        fillY: 78,
+        fillSprite: "nrg-fill-laser"
+      },
       194,
       194,
       0,
-      '',
-      185 * this.game.multiplier,
-      25 * this.game.multiplier,
-      'laser',
+      "",
+      32 * this.game.multiplier,
+      24 * this.game.multiplier,
+      "laser",
       0,
       0.1,
       { x: 2, y: 3 },
-      { name: 'laze', frames: [0, 1, 2], fps: 15, loop: true },
+      { name: "laze", frames: [0, 1, 2], fps: 15, loop: true },
       null,
-      'Lazer Eyes!',
+      "Lazer Eyes! Press F to fire!",
       0
     );
 
@@ -314,30 +326,32 @@ class Setup extends Phaser.State {
         laser.currentNrg -= 48.5; // Max NRG is 194, laser takes 25% of max to fire each time - change to 200 max?
         laser.nrgObj.width = laser.currentNrg; // As mentioned, currentNrg also controls width of the sprite
 
-        if (cat.direction === 'right') {
+        if (cat.direction === "right") {
           /*
-          * this.game.theLaser works by moving its spriteObj around - it doesn't create anything new, but repositions & changes visibility
-          * There is only one this.game.theLaser object (and sprite) in the game, including the powerup and fired lasers
-          */
+           * this.game.theLaser works by moving its spriteObj around - it doesn't create anything new, but repositions & changes visibility
+           * There is only one this.game.theLaser object (and sprite) in the game, including the powerup and fired lasers
+           */
           laserSprite.x = cat.x + 70;
           laserSprite.y = cat.y + 20;
           laserSprite.scale.setTo(3, 2); // Different scale from the powerup sprite
           laserSprite.alpha = 1; // This makes the sprite visible, its default alpha is 0
         }
-        if (cat.direction === 'left') {
+        if (cat.direction === "left") {
           laserSprite.x = cat.x + 15;
           laserSprite.y = cat.y + 20;
           laserSprite.scale.setTo(-3, 2);
           laserSprite.alpha = 1;
         }
-        this.game.add.tween(laserSprite).to({ alpha: 0 }, 500, Phaser.Easing.Linear.None, true, 1000); // Use a tween to fade the laser out after a delay
+        this.game.add
+          .tween(laserSprite)
+          .to({ alpha: 0 }, 500, Phaser.Easing.Linear.None, true, 1000); // Use a tween to fade the laser out after a delay
         laser.delay = this.game.time.now + 2000; // Can only trigger shootLaser once every 2 seconds - goes well with the recharge sound
       } else if (this.game.time.now > laser.delay) {
         // If no laser NRG, play an empty actions and msg - also has 2 second delay
         this.game.emptyClick.play();
         var msgX = Math.floor(cat.x + cat.width / 2);
         var msgY = Math.floor(cat.y + cat.height / 2);
-        var msg = this.game.add.text(msgX, msgY, 'Empty!', this.game.textStyle);
+        var msg = this.game.add.text(msgX, msgY, "Empty!", this.game.textStyle);
         msg.lifespan = 1500;
         laser.delay = this.game.time.now + 2000;
       }
@@ -352,24 +366,28 @@ class Setup extends Phaser.State {
           this.game.theCat.isSitting = false;
           this.game.theCat.body.velocity.y = -100; // Fly upward!
           this.game.theHeli.currentNrg--; // theHeli's NRG drops while the space bar is held, as this is called in Main update()
-          this.game.theHeli.nrgObj.width = this.game.theHeliNrgRatio * this.game.theHeli.maxNrg; // currentNRG / maxNRG determines where NRG bar width, so it shrinks as currentNRG decreases
+          this.game.theHeli.nrgObj.width =
+            this.game.theHeliNrgRatio * this.game.theHeli.maxNrg; // currentNRG / maxNRG determines where NRG bar width, so it shrinks as currentNRG decreases
 
           if (!this.game.keys.left.isDown && !this.game.keys.right.isDown) {
             // Play different animations depending on where the cat is when flying mode is triggered
-            if (this.game.theCat.direction === 'left') {
-              this.game.theCat.animations.play('idleHeliLeft');
-            } else if (this.game.theCat.direction === 'right') {
-              this.game.theCat.animations.play('idleHeliRight');
+            if (this.game.theCat.direction === "left") {
+              this.game.theCat.animations.play("idleHeliLeft");
+            } else if (this.game.theCat.direction === "right") {
+              this.game.theCat.animations.play("idleHeliRight");
             }
           }
 
           if (this.game.keys.left.isDown && !this.game.keys.right.isDown) {
             // There is a sorta bug here where, if out of NRG, holding down space and left or right keys will not move you - normal movement relies on fly mode being inactive
             this.game.theCat.body.velocity.x = -120;
-            this.game.theCat.animations.play('heliLeft');
-          } else if (this.game.keys.right.isDown && !this.game.keys.left.isDown) {
+            this.game.theCat.animations.play("heliLeft");
+          } else if (
+            this.game.keys.right.isDown &&
+            !this.game.keys.left.isDown
+          ) {
             this.game.theCat.body.velocity.x = 120;
-            this.game.theCat.animations.play('heliRight');
+            this.game.theCat.animations.play("heliRight");
           }
         }
       }
@@ -380,7 +398,8 @@ class Setup extends Phaser.State {
       if (this.game.theCat.isSitting && this.game.theHeli.have) {
         if (this.game.theHeli.currentNrg <= this.game.theHeli.maxNrg) {
           this.game.theHeli.currentNrg++; // The opposite of decreasing the bar when flying
-          this.game.theHeli.nrgObj.width = this.game.theHeliNrgRatio * this.game.theHeli.maxNrg;
+          this.game.theHeli.nrgObj.width =
+            this.game.theHeliNrgRatio * this.game.theHeli.maxNrg;
         }
       }
     };
@@ -400,7 +419,12 @@ class Setup extends Phaser.State {
       let msgX = Math.floor(this.game.theCat.x + this.game.theCat.width / 2);
       let msgY = Math.floor(this.game.theCat.y + this.game.theCat.height / 2);
       if (!parent.have) {
-        let msg = this.game.add.text(msgX, msgY, parent.msg, this.game.textStyle);
+        let msg = this.game.add.text(
+          msgX,
+          msgY,
+          parent.msg,
+          this.game.textStyle
+        );
         // Not sure if doing msgs specifically each time like this, not just here but on all events, is the best way?  Maybe doesn't matter since the events happen infrequently
         msg.lifespan = 1500;
         parent.nrgObj.width = parent.maxNrg; // Width determined by max this time, not current
@@ -422,15 +446,34 @@ class Setup extends Phaser.State {
     this.game.allFoodCans = []; // Holds all food can game objects
 
     /* Food currently just keeps score, intention is to have 4 food cans restore 1 life */
-    this.game.foodCanOne = new FoodCan('foodCanOne', 9 * this.game.multiplier, 10 * this.game.multiplier, null);
-    this.game.foodCanTwo = new FoodCan('foodCanTwo', 5 * this.game.multiplier, 27 * this.game.multiplier, null);
-    this.game.foodCanThree = new FoodCan('foodCanThree', 46 * this.game.multiplier, 21 * this.game.multiplier, null);
-    this.game.allFoodCans.push(this.game.foodCanOne, this.game.foodCanTwo, this.game.foodCanThree);
+    this.game.foodCanOne = new FoodCan(
+      "foodCanOne",
+      12 * this.game.multiplier,
+      26 * this.game.multiplier,
+      null
+    );
+    this.game.foodCanTwo = new FoodCan(
+      "foodCanTwo",
+      105 * this.game.multiplier,
+      21 * this.game.multiplier,
+      null
+    );
+    this.game.foodCanThree = new FoodCan(
+      "foodCanThree",
+      198 * this.game.multiplier,
+      19 * this.game.multiplier,
+      null
+    );
+    this.game.allFoodCans.push(
+      this.game.foodCanOne,
+      this.game.foodCanTwo,
+      this.game.foodCanThree
+    );
 
     /* Creates a sprite for each foodCan# game object, and pins it as a property */
     this.game.addFoodCans = () => {
       this.game.allFoodCans.map(can => {
-        const theCan = this.game.add.sprite(can.startX, can.startY, 'can');
+        const theCan = this.game.add.sprite(can.startX, can.startY, "can");
         this.game.physics.arcade.enable(theCan); // Physics need to be enabled for collision
         this.game.slopes.enable(theCan);
         theCan.enableBody = true;
@@ -445,7 +488,12 @@ class Setup extends Phaser.State {
       can.kill();
       let msgX = Math.floor(this.game.theCat.x + this.game.theCat.width / 2);
       let msgY = Math.floor(this.game.theCat.y + this.game.theCat.height / 2);
-      let msg = this.game.add.text(msgX, msgY, 'Got some catfood!', this.game.textStyle);
+      let msg = this.game.add.text(
+        msgX,
+        msgY,
+        "Got some catfood!",
+        this.game.textStyle
+      );
       msg.lifespan = 1500;
       this.game.score++; // Currently cans are tied only to score, get 3 to trigger the msg
     };
@@ -465,9 +513,9 @@ class Setup extends Phaser.State {
 
     /* Currently only one powercell in game, will add more when level layout finshed */
     this.game.powerCellOne = new PowerCell(
-      'powerCellOne',
-      6 * this.game.multiplier,
-      4.5 * this.game.multiplier,
+      "powerCellOne",
+      128 * this.game.multiplier,
+      27 * this.game.multiplier,
       null,
       0
     ); // May need to add dynamically generated cells so that ammo never runs out (time them maybe?)
@@ -476,7 +524,11 @@ class Setup extends Phaser.State {
     /* Creates a sprite for each powercell game object and adds it ot the world */
     this.game.addPowerCells = () => {
       this.game.allPowerCells.map(cell => {
-        const theCell = this.game.add.sprite(cell.startX, cell.startY, 'powercell');
+        const theCell = this.game.add.sprite(
+          cell.startX,
+          cell.startY,
+          "powercell"
+        );
         this.game.physics.arcade.enable(theCell);
         this.game.slopes.enable(theCell);
         theCell.enableBody = true;
@@ -497,7 +549,12 @@ class Setup extends Phaser.State {
         let msgY = Math.floor(this.game.theCat.y + this.game.theCat.height / 2);
         if (this.game.time.now > cellParent.delay) {
           if (this.game.theLaser.nrgObj.width === this.game.theLaser.maxNrg) {
-            let msg = this.game.add.text(msgX, msgY, 'Ammo full!', this.game.textStyle);
+            let msg = this.game.add.text(
+              msgX,
+              msgY,
+              "Ammo full!",
+              this.game.textStyle
+            );
             msg.lifespan = 1500;
           }
         }
@@ -505,7 +562,12 @@ class Setup extends Phaser.State {
           // Check if the laser doesn't have full ammo
           cell.kill();
           this.game.reloadLaser.play();
-          let msg = this.game.add.text(msgX, msgY, 'Got Powercell!', this.game.textStyle);
+          let msg = this.game.add.text(
+            msgX,
+            msgY,
+            "Got Powercell!",
+            this.game.textStyle
+          );
           this.game.theLaser.currentNrg = this.game.theLaser.maxNrg; // Set the laser NRG to max, along with its bar width
           this.game.theLaser.nrgObj.width = this.game.theLaser.maxNrg;
           msg.lifespan = 1500;
@@ -531,49 +593,65 @@ class Setup extends Phaser.State {
     this.game.allRats = []; // By now this pattern should look familiar
 
     /* Add some rats to the game - currently six */
-    this.game.ratOne = new Rat('ratOne', 10 * this.game.multiplier, 26 * this.game.multiplier, 'left', false, 0, null);
-    this.game.ratTwo = new Rat('ratTwo', 25 * this.game.multiplier, 26 * this.game.multiplier, 'right', false, 0, null);
+    this.game.ratOne = new Rat(
+      "ratOne",
+      10 * this.game.multiplier,
+      26 * this.game.multiplier,
+      "left",
+      false,
+      0,
+      null
+    );
+    this.game.ratTwo = new Rat(
+      "ratTwo",
+      25 * this.game.multiplier,
+      26 * this.game.multiplier,
+      "right",
+      false,
+      0,
+      null
+    );
     this.game.ratThree = new Rat(
-      'ratThree',
+      "ratThree",
       45 * this.game.multiplier,
       26 * this.game.multiplier,
-      'left',
+      "left",
       false,
       0,
       null
     );
     this.game.ratFour = new Rat(
-      'ratFour',
+      "ratFour",
       78 * this.game.multiplier,
       19 * this.game.multiplier,
-      'right',
+      "right",
       false,
       0,
       null
     );
     this.game.ratFive = new Rat(
-      'ratFive',
+      "ratFive",
       82 * this.game.multiplier,
       24 * this.game.multiplier,
-      'left',
+      "left",
       false,
       0,
       null
     );
     this.game.ratSix = new Rat(
-      'ratSix',
+      "ratSix",
       115 * this.game.multiplier,
       24 * this.game.multiplier,
-      'right',
+      "right",
       false,
       0,
       null
     );
     this.game.ratSeven = new Rat(
-      'ratSix',
+      "ratSix",
       148 * this.game.multiplier,
       26 * this.game.multiplier,
-      'right',
+      "right",
       false,
       0,
       null
@@ -592,15 +670,15 @@ class Setup extends Phaser.State {
     /* Add the rat sprites to the world for each rat game object, and pin to parent */
     this.game.addRats = () => {
       this.game.allRats.map(rat => {
-        const theRat = this.game.add.sprite(rat.startX, rat.startY, 'rat');
+        const theRat = this.game.add.sprite(rat.startX, rat.startY, "rat");
         this.game.physics.arcade.enable(theRat);
         this.game.slopes.enable(theRat);
         theRat.enableBody = true;
         theRat.body.gravity.y = 400;
         theRat.body.bounceY = 0.1;
         theRat.body.collideWorldBounds = true;
-        theRat.animations.add('moveLeft', [4, 5, 6, 7], 10, true);
-        theRat.animations.add('moveRight', [0, 1, 2, 3], 10, true);
+        theRat.animations.add("moveLeft", [4, 5, 6, 7], 10, true);
+        theRat.animations.add("moveRight", [0, 1, 2, 3], 10, true);
         theRat.parentRat = rat;
         rat.spriteObj = theRat;
       });
@@ -612,9 +690,11 @@ class Setup extends Phaser.State {
       const parentIndex = this.game.allRats.indexOf(parentRat); // Locate the parent rat game object in the allRats array, for deletion
       if (laser.alpha === 1 && this.game.time.now > parentRat.delay) {
         parentRat.dead = true;
-        const laserBurst = this.game.add.sprite(rat.x, rat.y, 'laserburst');
+        const laserBurst = this.game.add.sprite(rat.x, rat.y, "laserburst");
         laserBurst.lifespan = 1000;
-        this.game.add.tween(rat).to({ alpha: 0 }, 500, Phaser.Easing.Linear.None, true); // The rat fades out to transparent over .5s
+        this.game.add
+          .tween(rat)
+          .to({ alpha: 0 }, 500, Phaser.Easing.Linear.None, true); // The rat fades out to transparent over .5s
         this.game.allRats.splice(parentIndex, 1); // Remove the rat game object from the allRats array
         parentRat.delay = this.game.time.now + 1500;
       }
@@ -623,12 +703,12 @@ class Setup extends Phaser.State {
     this.game.biteTheCat = (cat, rat) => {
       if (this.game.time.now > cat.biteDelay && rat.alpha === 1) {
         let avgX = (cat.x + rat.x) / 2;
-        let burst = this.game.add.sprite(avgX, rat.y, 'burst');
+        let burst = this.game.add.sprite(avgX, rat.y, "burst");
         burst.lifespan = 500;
 
         let msgX = Math.floor(cat.x + cat.width / 2);
         let msgY = Math.floor(cat.y + cat.height / 3);
-        let msg = this.game.add.text(msgX, msgY, 'Ouch!', this.game.textStyle);
+        let msg = this.game.add.text(msgX, msgY, "Ouch!", this.game.textStyle);
         msg.lifespan = 500;
 
         if (this.game.lives > 0) {
@@ -637,7 +717,7 @@ class Setup extends Phaser.State {
           let lifeMsg = this.game.add.text(
             cat.x,
             500,
-            8 - this.game.currentLife + ' lives remaining...',
+            8 - this.game.currentLife + " lives remaining...",
             this.game.textStyle
           );
           lifeMsg.lifespan = 1500;
@@ -650,7 +730,18 @@ class Setup extends Phaser.State {
 
     // bug class
     class Bug {
-      constructor(name, startX, startY, endX, endY, cycleX, cycleY, dead, delay, spriteObj) {
+      constructor(
+        name,
+        startX,
+        startY,
+        endX,
+        endY,
+        cycleX,
+        cycleY,
+        dead,
+        delay,
+        spriteObj
+      ) {
         this.name = name;
         this.startX = startX;
         this.startY = startY;
@@ -666,7 +757,7 @@ class Setup extends Phaser.State {
     this.game.allBugs = [];
 
     this.game.bugOne = new Bug(
-      'bugOne',
+      "bugOne",
       190 * this.game.multiplier,
       20 * this.game.multiplier,
       194 * this.game.multiplier,
@@ -679,7 +770,7 @@ class Setup extends Phaser.State {
     );
 
     this.game.bugTwo = new Bug(
-      'bugTwo',
+      "bugTwo",
       133 * this.game.multiplier,
       27 * this.game.multiplier,
       143 * this.game.multiplier,
@@ -692,7 +783,7 @@ class Setup extends Phaser.State {
     );
 
     this.game.bugThree = new Bug(
-      'bugThree',
+      "bugThree",
       163 * this.game.multiplier,
       24 * this.game.multiplier,
       174 * this.game.multiplier,
@@ -704,17 +795,21 @@ class Setup extends Phaser.State {
       null
     );
 
-    this.game.allBugs.push(this.game.bugOne, this.game.bugTwo, this.game.bugThree);
+    this.game.allBugs.push(
+      this.game.bugOne,
+      this.game.bugTwo,
+      this.game.bugThree
+    );
 
     this.game.addBugs = () => {
       this.game.allBugs.map(bug => {
-        const theBug = this.game.add.sprite(bug.startX, bug.startY, 'bug');
+        const theBug = this.game.add.sprite(bug.startX, bug.startY, "bug");
         this.game.physics.arcade.enable(theBug);
         this.game.slopes.enable(theBug);
         theBug.enableBody = true;
         theBug.body.collideWorldBounds = true;
         theBug.body.gravity.y = 200;
-        theBug.animations.add('buzz', [0, 1, 2, 3, 4, 5], 20, true);
+        theBug.animations.add("buzz", [0, 1, 2, 3, 4, 5], 20, true);
         theBug.parentBug = bug;
         theBug.scale.setTo(1, 1);
         bug.spriteObj = theBug;
@@ -726,9 +821,11 @@ class Setup extends Phaser.State {
       const parentIndex = this.game.allBugs.indexOf(parentBug);
       if (laser.alpha === 1 && this.game.time.now > parentBug.delay) {
         parentBug.dead = true;
-        const laserBurst = this.game.add.sprite(bug.x, bug.y, 'laserburst');
+        const laserBurst = this.game.add.sprite(bug.x, bug.y, "laserburst");
         laserBurst.lifespan = 1000;
-        this.game.add.tween(bug).to({ alpha: 0 }, 500, Phaser.Easing.Linear.None, true);
+        this.game.add
+          .tween(bug)
+          .to({ alpha: 0 }, 500, Phaser.Easing.Linear.None, true);
         this.game.allBugs.splice(parentIndex, 1);
         parentBug.delay = this.game.time.now + 1500;
       }
@@ -736,7 +833,18 @@ class Setup extends Phaser.State {
 
     // fish class
     class Fish {
-      constructor(name, startX, startY, endX, endY, cycleX, cycleY, dead, delay, spriteObj) {
+      constructor(
+        name,
+        startX,
+        startY,
+        endX,
+        endY,
+        cycleX,
+        cycleY,
+        dead,
+        delay,
+        spriteObj
+      ) {
         this.name = name;
         this.startX = startX;
         this.startY = startY;
@@ -752,7 +860,7 @@ class Setup extends Phaser.State {
     this.game.allFish = [];
 
     this.game.fishOne = new Fish(
-      'fishOne',
+      "fishOne",
       89 * this.game.multiplier,
       30 * this.game.multiplier,
       89 * this.game.multiplier,
@@ -765,7 +873,7 @@ class Setup extends Phaser.State {
     );
 
     this.game.fishTwo = new Fish(
-      'fishTwo',
+      "fishTwo",
       113 * this.game.multiplier,
       30 * this.game.multiplier,
       113 * this.game.multiplier,
@@ -778,7 +886,7 @@ class Setup extends Phaser.State {
     );
 
     this.game.fishFour = new Fish(
-      'fishFour',
+      "fishFour",
       192 * this.game.multiplier,
       30 * this.game.multiplier,
       192 * this.game.multiplier,
@@ -791,7 +899,7 @@ class Setup extends Phaser.State {
     );
 
     this.game.fishThree = new Fish(
-      'fishThree',
+      "fishThree",
       118 * this.game.multiplier,
       30 * this.game.multiplier,
       118 * this.game.multiplier,
@@ -803,15 +911,20 @@ class Setup extends Phaser.State {
       null
     );
 
-    this.game.allFish.push(this.game.fishOne, this.game.fishTwo, this.game.fishThree, this.game.fishFour);
+    this.game.allFish.push(
+      this.game.fishOne,
+      this.game.fishTwo,
+      this.game.fishThree,
+      this.game.fishFour
+    );
 
     this.game.addFish = () => {
       this.game.allFish.map(fish => {
-        const theFish = this.game.add.sprite(fish.startX, fish.startY, 'fish');
+        const theFish = this.game.add.sprite(fish.startX, fish.startY, "fish");
         this.game.physics.arcade.enable(theFish);
         this.game.slopes.enable(theFish);
         theFish.enableBody = true;
-        theFish.animations.add('gulp', [0, 1, 2], 5, true);
+        theFish.animations.add("gulp", [0, 1, 2], 5, true);
         theFish.parentfish = fish;
         theFish.scale.setTo(1, 1);
         theFish.anchor.setTo(0.5);
@@ -822,13 +935,18 @@ class Setup extends Phaser.State {
     this.game.sayMeow = direction => {
       if (this.game.time.now > this.game.theCat.meowDelay) {
         let meowX, meowY;
-        if (direction === 'right') {
+        if (direction === "right") {
           meowX = this.game.theCat.x + 50;
-        } else if (direction === 'left') {
+        } else if (direction === "left") {
           meowX = this.game.theCat.x - 50;
         }
         meowY = this.game.theCat.y - 25;
-        const meow = this.game.add.text(meowX, meowY, 'Meooow!', this.game.textStyle);
+        const meow = this.game.add.text(
+          meowX,
+          meowY,
+          "Meooow!",
+          this.game.textStyle
+        );
         meow.lifespan = 1000;
 
         this.game.meowClip.play();
@@ -846,7 +964,7 @@ class Setup extends Phaser.State {
         let lifeMsg = this.game.add.text(
           this.game.theCat.x,
           500,
-          8 - this.game.currentLife + ' lives remaining...',
+          8 - this.game.currentLife + " lives remaining...",
           this.game.textStyle
         );
         lifeMsg.lifespan = 1500;
@@ -858,11 +976,19 @@ class Setup extends Phaser.State {
     // draw UI elements - cat head lives and 2 energy bars
     this.game.drawUi = () => {
       this.game.allPickups.map(pickup => {
-        const nrgBg = this.game.add.sprite(pickup.nrgBar.barX, pickup.nrgBar.barY, 'nrg-bg');
+        const nrgBg = this.game.add.sprite(
+          pickup.nrgBar.barX,
+          pickup.nrgBar.barY,
+          "nrg-bg"
+        );
         nrgBg.fixedToCamera = true;
         nrgBg.width = 200;
 
-        const nrgFill = this.game.add.sprite(pickup.nrgBar.fillX, pickup.nrgBar.fillY, pickup.nrgBar.fillSprite);
+        const nrgFill = this.game.add.sprite(
+          pickup.nrgBar.fillX,
+          pickup.nrgBar.fillY,
+          pickup.nrgBar.fillSprite
+        );
         nrgFill.fixedToCamera = true;
         nrgFill.width = 0;
         nrgFill.height = nrgFill.height - 6;
@@ -870,24 +996,36 @@ class Setup extends Phaser.State {
       });
 
       for (let i = 0; i < this.game.lives; i++) {
-        const newHead = this.game.add.sprite(1000 + 25 * i, 25, 'catlives');
+        const newHead = this.game.add.sprite(1000 + 25 * i, 25, "catlives");
         newHead.frame = 0;
         newHead.fixedToCamera = true;
         this.game.gameLives.push(newHead);
       }
 
       // add score counter and set it to follow camera
-      this.game.theScore = this.game.add.text(25, 25, 'Cans: ' + this.game.score, this.game.textStyle);
+      this.game.theScore = this.game.add.text(
+        25,
+        25,
+        "Cans: " + this.game.score,
+        this.game.textStyle
+      );
       this.game.theScore.fixedToCamera = true;
 
       // add remaining rats counter and set it to follow camera
-      this.game.theRemainingRats = this.game.add.text(25, 55, 'Rats: ' + this.game.remainingRats, this.game.textStyle);
+      this.game.theRemainingRats = this.game.add.text(
+        25,
+        55,
+        "Rats: " + this.game.remainingRats,
+        this.game.textStyle
+      );
       this.game.theRemainingRats.fixedToCamera = true;
     };
 
     /** CONTROLS */
     this.game.keys = this.game.input.keyboard.createCursorKeys();
-    this.game.spaceKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+    this.game.spaceKey = this.game.input.keyboard.addKey(
+      Phaser.Keyboard.SPACEBAR
+    );
     this.game.fKey = this.game.input.keyboard.addKey(Phaser.Keyboard.F);
 
     this.game.sitCat = () => {
@@ -895,11 +1033,11 @@ class Setup extends Phaser.State {
         this.game.theCat.isSitting = true;
         this.game.theCat.animations.stop(null, false);
 
-        if (this.game.theCat.direction === 'right') {
-          this.game.sayMeow('right');
+        if (this.game.theCat.direction === "right") {
+          this.game.sayMeow("right");
           this.game.theCat.frame = 17;
         } else {
-          this.game.sayMeow('left');
+          this.game.sayMeow("left");
           this.game.theCat.frame = 8;
         }
       }
@@ -907,10 +1045,10 @@ class Setup extends Phaser.State {
 
     this.game.bindLaser = () => {
       if (this.game.fKey.isDown && this.game.theLaser.have) {
-        if (this.game.theCat.direction === 'left') {
-          this.game.shootLaser('left');
-        } else if (this.game.theCat.direction === 'right') {
-          this.game.shootLaser('right');
+        if (this.game.theCat.direction === "left") {
+          this.game.shootLaser("left");
+        } else if (this.game.theCat.direction === "right") {
+          this.game.shootLaser("right");
         }
       }
     };
@@ -921,8 +1059,15 @@ class Setup extends Phaser.State {
     this.game.allCansCollected = () => {
       let msgX = Math.floor(this.game.theCat.x - 150);
       let msgY = Math.floor(this.game.theCat.y - 175);
-      let msg = this.game.add.text(msgX, msgY, 'ALL CANS COLLECTED...', this.game.bigTextStyle);
-      this.game.add.tween(msg).to({ alpha: 0 }, 2000, Phaser.Easing.Linear.None, true, 1500);
+      let msg = this.game.add.text(
+        msgX,
+        msgY,
+        "ALL CANS COLLECTED...",
+        this.game.bigTextStyle
+      );
+      this.game.add
+        .tween(msg)
+        .to({ alpha: 0 }, 2000, Phaser.Easing.Linear.None, true, 1500);
       msg.lifespan = 3500;
       this.game.cansCollected = true;
     };
@@ -931,28 +1076,45 @@ class Setup extends Phaser.State {
     this.game.allRatsDead = () => {
       let msgX = Math.floor(this.game.theCat.x - 150);
       let msgY = Math.floor(this.game.theCat.y - 175);
-      let msg = this.game.add.text(msgX, msgY, 'ALL RATS ELIMINATED...', this.game.bigTextStyle);
-      this.game.add.tween(msg).to({ alpha: 0 }, 2000, Phaser.Easing.Linear.None, true, 1500);
+      let msg = this.game.add.text(
+        msgX,
+        msgY,
+        "ALL RATS ELIMINATED...",
+        this.game.bigTextStyle
+      );
+      this.game.add
+        .tween(msg)
+        .to({ alpha: 0 }, 2000, Phaser.Easing.Linear.None, true, 1500);
       msg.lifespan = 3500;
       this.game.ratsDead = true;
     };
 
     this.game.moveDoor = direction => {
-      if (direction === 'right') {
+      if (direction === "right") {
         this.game.facilityDoor.open = true;
         this.game.add
           .tween(this.game.facilityDoor)
-          .to({ x: 200 * this.game.multiplier }, 300, Phaser.Easing.Linear.None, true);
-      } else if (direction === 'left') {
+          .to(
+            { x: 200 * this.game.multiplier },
+            300,
+            Phaser.Easing.Linear.None,
+            true
+          );
+      } else if (direction === "left") {
         this.game.facilityDoor.open = false;
         this.game.add
           .tween(this.game.facilityDoor)
-          .to({ x: 199 * this.game.multiplier }, 300, Phaser.Easing.Linear.None, true);
+          .to(
+            { x: 199 * this.game.multiplier },
+            300,
+            Phaser.Easing.Linear.None,
+            true
+          );
       }
       this.game.facilityDoor.delay = this.game.time.now + 500;
     };
 
-    this.game.state.start('Menu');
+    this.game.state.start("Menu");
   }
 }
 
